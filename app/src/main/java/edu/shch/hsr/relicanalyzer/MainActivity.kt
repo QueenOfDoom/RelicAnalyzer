@@ -54,7 +54,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-private fun RelicOrnamentChoice() {
+private fun RelicOrnamentChoice(onCharacter: () -> Unit, onRelicType: (RelicType) -> Unit) {
     val isRelic: MutableState<Boolean> = remember { mutableStateOf(true) }
     val relic = R.drawable.relic_117_0
     val ornament = R.drawable.ornament_311_0
@@ -82,7 +82,7 @@ private fun RelicOrnamentChoice() {
                 .joinToString("\n")
 
             ElevatedButton(
-                onClick = {  },
+                onClick = { onRelicType(if (isRelic.value) RelicType.Relic else RelicType.PlanarOrnament) },
                 border = BorderStroke(
                     4.dp, DarkLavender
                 ),
@@ -110,7 +110,9 @@ private fun RelicOrnamentChoice() {
             }
             IconButton(
                 onClick = { isRelic.value = !isRelic.value },
-                modifier = Modifier.offset((-10).dp, 0.dp).scale(1.25f)
+                modifier = Modifier
+                    .offset((-10).dp, 0.dp)
+                    .scale(1.25f)
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.swap_horiz),
@@ -150,7 +152,7 @@ private fun RelicOrnamentChoice() {
         }
         Row {
             ElevatedButton(
-                onClick = {  },
+                onClick = { onCharacter() },
                 border = BorderStroke(
                     4.dp, DarkLavender
                 ),
@@ -169,12 +171,24 @@ private fun RelicOrnamentChoice() {
 @Composable
 fun RelicAnalyzer(modifier: Modifier = Modifier, dispatcher: OnBackPressedDispatcher) {
     var relicType: RelicType? by rememberSaveable { mutableStateOf(null) }
+    var isInCharacter: Boolean by rememberSaveable { mutableStateOf(false) }
 
     Surface(modifier = modifier, color = MaterialTheme.colorScheme.background) {
-        when (relicType) {
-            RelicType.Relic -> { }
-            RelicType.PlanarOrnament -> { }
-            null -> RelicOrnamentChoice()
+        if (isInCharacter) {
+            TODO()
+        } else {
+            when (relicType) {
+                RelicType.Relic -> {
+                    RelicsByCavernsOfCorrosion(dispatcher) { relicType = null }
+                }
+                RelicType.PlanarOrnament -> {
+                    OrnamentsBySimulatedUniverseWorlds(dispatcher) { relicType = null }
+                }
+                null -> RelicOrnamentChoice(
+                    { isInCharacter = true },
+                    { type -> relicType = type }
+                )
+            }
         }
     }
 }

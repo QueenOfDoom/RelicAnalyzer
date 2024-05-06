@@ -3,6 +3,9 @@ package edu.shch.hsr.relicanalyzer.hsr
 import androidx.annotation.StringRes
 import edu.shch.hsr.relicanalyzer.R
 
+
+
+@Suppress("unused")
 enum class RelicSlot(@StringRes val text: Int) {
     Head(R.string.relic_head),
     Hands(R.string.relic_hands),
@@ -10,6 +13,7 @@ enum class RelicSlot(@StringRes val text: Int) {
     Feet(R.string.relic_feet)
 }
 
+@Suppress("unused")
 enum class OrnamentSlot(@StringRes val text: Int) {
     PlanarSphere(R.string.ornament_sphere),
     LinkRope(R.string.ornament_rope)
