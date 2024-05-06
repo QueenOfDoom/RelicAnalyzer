@@ -11,13 +11,16 @@ tasks {
         group = "update"
 
         val relicDiscoveryUrl = URL("https://www.mobilemeta.gg/honkai-starrail/database/relic")
+        val characterDiscoveryUrl = URL("https://www.mobilemeta.gg/honkai-starrail/character")
         val cavernOfCorrosionUrl = URL("https://honkai-star-rail.fandom.com/wiki/Cavern_of_Corrosion")
         val simulatedUniverseUrl = URL("https://honkai-star-rail.fandom.com/wiki/Simulated_Universe/Worlds")
-        val resourceBaseUrl = "https://images.mobilemeta.gg/starrail/static/icon/relic"
+        val relicBaseUrl = "https://images.mobilemeta.gg/starrail/static/icon/relic"
+        val characterBaseUrl = "https://images.mobilemeta.gg/starrail/images/characters"
 
         val relicData = String(relicDiscoveryUrl.readBytes())
         val corrosionData = String(cavernOfCorrosionUrl.readBytes())
         val simulatedWorldData = String(simulatedUniverseUrl.readBytes())
+        val characterData = String(characterDiscoveryUrl.readBytes())
 
         @Suppress("SpellCheckingInspection")
         val labelRegex = Regex("<div class=\"font-starrailweb text-yellow-400\">([^<]+)</div>")
@@ -35,13 +38,26 @@ tasks {
         val simulatedUniverseRegex = Regex("<div class=\"card-container\"><span class=\"card-wrapper\"><span class=\"card-body card-2?345\"><span class=\"card-image\"><span><a href=\"/wiki/[^\"]+\" title=\"([^\"]+)\">")
         val worldOrnaments = simulatedUniverseRegex.findAll(simulatedWorldData).map { match -> match.groupValues[1] }.toList()
 
+        val characterImageRegex = Regex("<img src=\"https://images.mobilemeta.gg/starrail/images/characters/([^/]+)/[^.]+.png\" alt=\"\" style=\"width:80px;height:82px\"/?>")
+        val characterImages = characterImageRegex.findAll(characterData).map { match -> match.groupValues[1] }.toList()
+
+        val characterNameRegex = Regex("<div class=\"w-20 overflow-hidden text-ellipsis\">([^<]+)</div>")
+        val characterNames = characterNameRegex.findAll(characterData).map { match -> match.groupValues[1] }.toList()
+
+        val suitableRelicRegex = Regex("<div class=\"h-20 w-20 rounded-full ring-2 ring-stone-900 hover:ring-yellow-500\"><a href=\"/honkai-starrail/character/([^\"]+)\">")
+        val characterDatabase = characterImages.mapIndexed { i, code ->
+            return@mapIndexed code to (characterNames[i] to mutableListOf<String>())
+        }.toMap()
+
         assert(labels.size == imageCodes.size)
+        assert(characterImages.size == characterNames.size)
 
         val generatedCodeFile = File("./app/src/main/java/edu/shch/hsr/relicanalyzer/hsr/HSR.kt")
         val generatedRelicEnum = StringBuilder()
         val generatedOrnamentEnum = StringBuilder()
-        val labelFile = File("./app/src/main/res/values/dynamic-relics.xml")
+        val labelFile = File("./app/src/main/res/values/dynamic-hsr.xml")
 
+        //#region Resource Generation
         val labelResource = StringBuilder().appendLine("<resources>")
         for ((imageCode, label) in imageCodes.zip(labels)) {
             if (imageCode.startsWith("1")) {
@@ -54,7 +70,7 @@ tasks {
                 for (part in 0..3) {
                     val imageFile = File("./app/src/main/res/drawable/relic_${imageCode}_${part}.png")
                     if (!imageFile.exists()) {
-                        imageFile.writeBytes(URL("$resourceBaseUrl/${imageCode}_${part}.png").readBytes())
+                        imageFile.writeBytes(URL("$relicBaseUrl/${imageCode}_${part}.png").readBytes())
                     }
                 }
             } else if (imageCode.startsWith("3")) {
@@ -67,38 +83,58 @@ tasks {
                 for (part in 0..1) {
                     val imageFile = File("./app/src/main/res/drawable/ornament_${imageCode}_${part}.png")
                     if (!imageFile.exists()) {
-                        imageFile.writeBytes(URL("$resourceBaseUrl/${imageCode}_${part}.png").readBytes())
+                        imageFile.writeBytes(URL("$relicBaseUrl/${imageCode}_${part}.png").readBytes())
                     }
                 }
             } else {
                 throw IllegalStateException("The 'API' appears to have changed, please check!")
             }
+
+            // Suitable Characters
+            val relicUrl = URL("https://www.mobilemeta.gg/honkai-starrail/database/relic/$imageCode")
+            val relicDBData = String(relicUrl.readBytes())
+            val suitableCharacters = suitableRelicRegex.findAll(relicDBData).map { match -> match.groupValues[1] }.toList()
+            // TODO: Fix issue with 'https://www.mobilemeta.gg/honkai-starrail/database/relic/118'
+            // There, the Character URLs don't point to the characters, but to the generic character page!
+            for (character in suitableCharacters) {
+                val relicType = if (imageCode.startsWith("1")) "Relic" else "Ornament"
+                characterDatabase[character]!!.second.add("${relicType}.${label.toEnumField()}")
+            }
+        }
+        for ((name, img) in characterNames.zip(characterImages)) {
+            val lowerEnum = name.toEnumField().lowercase()
+            labelResource.appendLine("\t<string name=\"character.${lowerEnum}\">${name}</string>")
+            val imageFile = File("./app/src/main/res/drawable/character_${lowerEnum}.png")
+            if (!imageFile.exists()) {
+                imageFile.writeBytes(URL("$characterBaseUrl/${img}/${img}.png").readBytes())
+            }
         }
         labelResource.appendLine("</resources>")
         labelFile.writeText(labelResource.toString())
+        //#endregion
 
-
+        //#region Code Generation
         generatedCodeFile.writeText(buildString {
             appendLine("package edu.shch.hsr.relicanalyzer.hsr").appendLine()
             appendLine("import androidx.annotation.DrawableRes")
             appendLine("import androidx.annotation.StringRes")
             appendLine("import edu.shch.hsr.relicanalyzer.R").appendLine()
             appendLine("@Suppress(\"SpellCheckingInspection\")")
-            appendLine("enum class Relic(")
+            appendLine("enum class Relic (")
             appendLine("\t@StringRes val text: Int,")
             appendLine("\t@DrawableRes val head: Int,")
             appendLine("\t@DrawableRes val hands: Int,")
             appendLine("\t@DrawableRes val body: Int,")
             appendLine("\t@DrawableRes val feet: Int")
-            appendLine(") {")
+            appendLine(") : GenericRelic {")
             append(generatedRelicEnum)
             appendLine("}").appendLine()
             appendLine("@Suppress(\"SpellCheckingInspection\")")
-            appendLine("enum class Ornament(")
+            appendLine("enum class Ornament (")
             appendLine("\t@StringRes val text: Int,")
             appendLine("\t@DrawableRes val planarSphere: Int,")
             appendLine("\t@DrawableRes val linkRope: Int")
-            appendLine(") {")
+            appendLine(") : GenericRelic {")
             append(generatedOrnamentEnum)
             appendLine("}").appendLine()
             appendLine("@Suppress(\"SpellCheckingInspection\")")
@@ -127,10 +163,28 @@ tasks {
                 appendLine("\tWORLD_${world}(Ornament.${firstSet}, Ornament.${secondSet}),")
             }
             appendLine("}").appendLine()
+            appendLine("@Suppress(\"SpellCheckingInspection\")")
+            appendLine("enum class Character(")
+            appendLine("\t@StringRes val characterName: Int,")
+            appendLine("\t@DrawableRes val img: Int,")
+            appendLine("\tvararg val preferredRelics: GenericRelic")
+            appendLine(") {")
+            for ((name, relics) in characterDatabase.values) {
+                val enum = name.toEnumField()
+                append("\t${enum}(R.string.character_${enum.lowercase()}, R.drawable.character_${enum.lowercase()}, ")
+                for (relic in relics) {
+                    append("$relic, ")
+                }
+                appendLine("),")
+            }
+            appendLine("}").appendLine()
         })
+        //#endregion
     }
 }
 
 fun String.toEnumField() =
     this.replace(Regex("[:,]"), "")
-        .uppercase().replace(Regex("[ -]"), "_")
+        .replace(Regex("[()]"), " ")
+        .replace(Regex(" +"), " ").trim()
+        .uppercase().replace(Regex("[ -.]"), "_")

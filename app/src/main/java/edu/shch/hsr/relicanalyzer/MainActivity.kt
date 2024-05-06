@@ -179,10 +179,10 @@ fun RelicAnalyzer(modifier: Modifier = Modifier, dispatcher: OnBackPressedDispat
         } else {
             when (relicType) {
                 RelicType.Relic -> {
-                    RelicsByCavernsOfCorrosion(dispatcher) { relicType = null }
+                    RelicView(dispatcher) { relicType = null }
                 }
                 RelicType.PlanarOrnament -> {
-                    OrnamentsBySimulatedUniverseWorlds(dispatcher) { relicType = null }
+                    OrnamentView(dispatcher) { relicType = null }
                 }
                 null -> RelicOrnamentChoice(
                     { isInCharacter = true },

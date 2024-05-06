@@ -66,15 +66,13 @@ fun OrnamentRow(world: SimulatedUniverse, modifier: Modifier = Modifier, onClick
 }
 
 @Composable()
-fun OrnamentsBySimulatedUniverseWorlds(dispatcher: OnBackPressedDispatcher, back: () -> Unit) {
+fun OrnamentsBySimulatedUniverseWorlds() {
     val worlds = SimulatedUniverse.entries.filter { it.sets.size == 2 }.toList()
     LazyVerticalGrid(
         horizontalArrangement = Arrangement.SpaceEvenly,
         columns = GridCells.Fixed(1),
         modifier = Modifier.padding(top = 60.dp)
     ) {
-        dispatcher.addCallback { back() }
-
         items(worlds.toTypedArray()) { world ->
             OrnamentRow(
                 world = world,
@@ -83,4 +81,10 @@ fun OrnamentsBySimulatedUniverseWorlds(dispatcher: OnBackPressedDispatcher, back
             HorizontalDivider(thickness = 2.dp, color = DarkLavender)
         }
     }
+}
+
+@Composable()
+fun OrnamentView(dispatcher: OnBackPressedDispatcher, back: () -> Unit) {
+    dispatcher.addCallback { back() }
+    OrnamentsBySimulatedUniverseWorlds()
 }

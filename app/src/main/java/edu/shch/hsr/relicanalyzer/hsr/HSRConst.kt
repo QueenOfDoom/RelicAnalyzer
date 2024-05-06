@@ -3,8 +3,6 @@ package edu.shch.hsr.relicanalyzer.hsr
 import androidx.annotation.StringRes
 import edu.shch.hsr.relicanalyzer.R
 
-
-
 @Suppress("unused")
 enum class RelicSlot(@StringRes val text: Int) {
     Head(R.string.relic_head),
@@ -23,6 +21,8 @@ enum class RelicType {
     Relic,
     PlanarOrnament
 }
+
+interface GenericRelic
 
 @Suppress("unused")
 enum class BodyStats {
