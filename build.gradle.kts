@@ -26,19 +26,9 @@ tasks {
         val generatedCodeFile = File("./app/src/main/java/edu/shch/hsr/relicanalyzer/hsr/HSR.kt")
         val generatedRelicEnum = StringBuilder()
         val generatedOrnamentEnum = StringBuilder()
-        val labelFile = File("./app/src/main/res/values/relics.xml")
+        val labelFile = File("./app/src/main/res/values/dynamic-relics.xml")
 
-        val labelResource = StringBuilder()
-            .appendLine("<resources>")
-            .appendLine("\t<string name=\"relic\">Relic</string>")
-            .appendLine("\t<string name=\"ornament\">Planar Ornament</string>")
-            .appendLine("\t<string name=\"relic.head\">Head</string>")
-            .appendLine("\t<string name=\"relic.hands\">Hands</string>")
-            .appendLine("\t<string name=\"relic.body\">Body</string>")
-            .appendLine("\t<string name=\"relic.feet\">Feet</string>")
-            .appendLine("\t<string name=\"ornament.sphere\">Planar Sphere</string>")
-            .appendLine("\t<string name=\"ornament.rope\">Link Rope</string>")
-
+        val labelResource = StringBuilder().appendLine("<resources>")
         for ((imageCode, label) in imageCodes.zip(labels)) {
             if (imageCode.startsWith("1")) {
                 labelResource.appendLine("\t<string name=\"relic.${imageCode}\">${label}</string>")

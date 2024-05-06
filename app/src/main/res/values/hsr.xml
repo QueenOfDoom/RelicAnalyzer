@@ -1,0 +1,11 @@
+<resources>
+	<string name="relic">Relic</string>
+	<string name="ornament">Planar Ornament</string>
+	<string name="relic.head">Head</string>
+	<string name="relic.hands">Hands</string>
+	<string name="relic.body">Body</string>
+	<string name="relic.feet">Feet</string>
+	<string name="ornament.sphere">Planar Sphere</string>
+	<string name="ornament.rope">Link Rope</string>
+	<string name="character">Character</string>
+</resources>
