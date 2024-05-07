@@ -1,10 +1,22 @@
+# IDE
 *.iml
+/.idea
+
+# Build System & Local Stuff
 .gradle
 /local.properties
-/.idea
-.DS_Store
 /build
 /captures
+local.properties
 .externalNativeBuild
 .cxx
-local.properties
+
+# OS Stuffs
+.DS_Store
+
+# Generated Resources
+**/dynamic/*.kt
+**/drawable/character_*
+**/drawable/relic_*
+**/drawable/ornament_*
+**/values/dynamic-*
