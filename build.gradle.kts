@@ -1,9 +1,19 @@
+import com.beust.klaxon.Klaxon
+import com.beust.klaxon.PathMatcher
+import org.jetbrains.kotlin.backend.common.push
+import java.io.StringReader
 import java.net.URL
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.jetbrains.kotlin.android) apply false
+}
+
+buildscript {
+    dependencies {
+        classpath(libs.klaxon)
+    }
 }
 
 // Constants
@@ -22,9 +32,11 @@ val dataBasePath = "./app/src/main/res/values"
 
 fun String.asField() =
     this.replace(Regex("[:,]"), "")
-        .replace(Regex("[()]"), " ")
+        .replace(Regex("[()•]"), " ")
         .replace(Regex(" +"), " ").trim()
-        .uppercase().replace(Regex("[ -.]"), "_")
+        .uppercase()
+        .replace(Regex("[ -.]"), "_")
+        .replace(Regex("_+"), "_")
 
 class ScrapeTask(
     private val url: URL,
@@ -46,46 +58,6 @@ class ScrapeTask(
 }
 
 tasks {
-    val scrapeCharacters = register("scrapeCharacters") {
-        group = "scraping"
-        ScrapeTask(
-            URL("https://www.mobilemeta.gg/honkai-starrail/character"),
-            listOf(
-                Regex("<img src=\"https://images.mobilemeta.gg/starrail/images/characters/([^/]+)/[^.]+.png\" alt=\"\" style=\"width:80px;height:82px\"/?>"),
-                Regex("<div class=\"w-20 overflow-hidden text-ellipsis\">([^<]+)</div>")
-            ),
-            listOf {
-                val imageCodes = it[0]
-                val names = it[1]
-                assert(imageCodes.size == names.size)
-                val characterBaseUrl = "https://images.mobilemeta.gg/starrail/images/characters"
-                val charactersCodeFile = File("${codeBasePath}/Characters.kt")
-                val characterCodeContent = mutableListOf<String>()
-                val charactersLangFile = File("${dataBasePath}/dynamic-characters.xml")
-                val characterLangContent = mutableListOf<String>()
-                for ((code, name) in imageCodes.zip(names)) {
-                    val enumName = name.asField()
-                    characterCodeContent.add(enumName)
-                    val idName = enumName.lowercase()
-                    characterLangContent.add("<string name=\"character.${idName}\">${name}</string>")
-                    val image = File("${drawableBasePath}/character_${idName}.png")
-                    if (!image.exists()) {
-                        image.writeBytes(URL("$characterBaseUrl/${code}/${code}.png").readBytes())
-                    }
-                }
-                charactersLangFile.writeText("<resources>\n\t${characterLangContent.joinToString("\n\t")}\n</resources>")
-                charactersCodeFile.writeText(buildString {
-                    appendLine(codePackage).appendLine()
-                    appendLine("enum class Character {")
-                    for (characterName in characterCodeContent) {
-                        appendLine("\t$characterName,")
-                    }
-                    appendLine("}")
-                })
-            }
-        ).scrape()
-    }
-
     val scrapeRelics = register("scrapeRelics") {
         group = "scraping"
         ScrapeTask(
@@ -223,75 +195,164 @@ tasks {
         ).scrape()
     }
 
-    val scrapeRelicPreferences = register("scrapeRelicPreferences") {
+    val scrapeCharacters = register("scrapeCharacters") {
         group = "scraping"
-
-        val characterDatabase = mutableMapOf<Int, String>()
-        val relicDatabase = mutableMapOf<String, List<String>>()
-
-        val characterIdRegex = Regex("\\\"characterId\\\":\\\"(\\d+)\\\"")
-        val characterImgRegex = Regex("src=\"https://images.mobilemeta.gg/starrail/static/icon/character/(\\d+).png\"")
-        val characterNameRegex = Regex("<div class=\"font-starrailweb text-shadow-emerald-500 text-3xl text-white\" style=\"text-shadow: rgb(255, 255, 255) 2px 2px;\">([^<]+)</div>")
-
-        val relicNameRegex = Regex("<div class=\"font-starrailweb my-2 text-2xl font-bold text-stone-200\">([^<]+)</div>")
-
-        ScrapeTask(
-            URL("https://www.mobilemeta.gg/honkai-starrail/character"),
-            listOf(Regex("href=\"/honkai-starrail/character/([^\"]+)\"")),
-            listOf {
-                val characters = it[0]
-                for (character in characters) {
-                    val characterUrl = URL("https://www.mobilemeta.gg/honkai-starrail/character/$character")
-                    val characterData = String(characterUrl.readBytes())
-                    val characterId = characterIdRegex.find(characterData)
-                        ?: throw IllegalStateException("Could not find Character ID for $character!")
-                    val characterName = characterNameRegex.find(characterData)
-                        ?: throw IllegalStateException("Could not find Character Name for $character!")
-                    characterDatabase[characterId.groupValues[1].toInt()] = characterName.groupValues[1].asField()
-                }
-            }
-        ).scrape()
-
-        ScrapeTask(
-            URL("https://www.mobilemeta.gg/honkai-starrail/database/relic"),
+        val charactersUrl = URL("https://www.prydwen.gg/page-data/star-rail/characters/page-data.json")
+        val rawCharacters = String(charactersUrl.readBytes())
+        val characterRegex = Regex(
             listOf(
-                Regex("href=\"/honkai-starrail/database/relic/(\\d+)\"")
-            ),
-            listOf {
-                val relicIds = it[0]
-                for (relicId in relicIds) {
-                    val relicUrl = URL("https://www.mobilemeta.gg/honkai-starrail/database/relic/$relicId")
-                    val relicData = String(relicUrl.readBytes())
-                    val relicName = relicNameRegex.find(relicData)
-                        ?: throw IllegalStateException("Could not find the Relic Name for Relic: $relicId")
-                    val characterIds = characterImgRegex.findAll(relicData)
-                    val relicType = if (relicId.startsWith("1")) "Relic" else "Ornament"
-                    relicDatabase["${relicType}.${relicName.groupValues[1].asField()}"] = characterIds.map { match ->
-                        characterDatabase[match.groupValues[1].toInt()]
-                            ?: throw IllegalStateException("There is some fuckin' error... Good Luck...")
-                    }.toList()
+                ".*element$",
+                ".*cardImage\\..*\\.images\\.fallback\\.src",
+                ".*fullImage\\..*\\.images\\.fallback\\.src",
+                ".*buildData\\[\\d+\\]\\.relics\\[\\d+\\].relic(_2)?",
+                ".*buildData\\[\\d+\\]\\.planars\\[\\d+\\].planar",
+                ".*buildData\\[\\d+\\]\\.body\\[\\d+\\].stat",
+                ".*buildData\\[\\d+\\]\\.feet\\[\\d+\\].stat",
+                ".*buildData\\[\\d+\\]\\.rope\\[\\d+\\].stat",
+                ".*buildData\\[\\d+\\]\\.sphere\\[\\d+\\].stat",
+                // TODO: Potentially parse sub-stat-priority
+            ).joinToString("|") { "($it)" })
+        val charactersRegex = Regex(".*(slug|name)$")
+
+        val characterDatabase = mutableMapOf<String, String>()
+        val characterCodeFile = File("${codeBasePath}/Characters.kt")
+        val characterCodeContent = StringBuilder()
+        val characterLangFile = File("${dataBasePath}/dynamic-characters.xml")
+        val characterLangContent = StringBuilder()
+
+        Klaxon().pathMatcher(object: PathMatcher {
+            var slug: String? = null
+            override fun onMatch(path: String, value: Any) {
+                if (path.endsWith("slug")) {
+                    slug = value.toString()
+                } else if (path.endsWith("name")) {
+                    characterDatabase[this.slug!!] = value.toString()
                 }
             }
-        ).scrape()
+            override fun pathMatches(path: String) = charactersRegex.matches(path)
+        }).parseJsonObject(StringReader(rawCharacters))
+        for ((slug, character) in characterDatabase) {
+            val charEnumName = character.asField()
+            val charVarName = charEnumName.lowercase()
 
-        val relicPreferencesFile = File("${codeBasePath}/RelicPreferences.kt")
-        relicPreferencesFile.writeText(buildString {
+            val characterUrl = URL("https://www.prydwen.gg/page-data/star-rail/characters/$slug/page-data.json")
+            val rawCharacter = String(characterUrl.readBytes())
+
+            var element: String? = null
+            var hasSplash = false
+            val preferredRelics = mutableListOf<Pair<String, String>>()
+            val preferredOrnaments = mutableListOf<String>()
+            val bodyStats = mutableListOf<String>()
+            val feetStats = mutableListOf<String>()
+            val ropeStats = mutableListOf<String>()
+            val sphereStats = mutableListOf<String>()
+
+            Klaxon().pathMatcher(object: PathMatcher {
+                override fun onMatch(path: String, value: Any) {
+                    val stringVal = value.toString()
+                    if (path.contains("cardImage")) {
+                        val ext = stringVal.split(".").last()
+                        val filePath = "${drawableBasePath}/character_${charVarName}_icon.${ext}"
+                        val file = File(filePath)
+                        if (file.exists()) return
+                        file.writeBytes(URL("https://www.prydwen.gg$value").readBytes())
+                    } else if (path.contains("fullImage")) {
+                        hasSplash = true
+                        val ext = stringVal.split(".").last()
+                        val filePath = "${drawableBasePath}/character_${charVarName}_splash.${ext}"
+                        val file = File(filePath)
+                        if (file.exists()) return
+                        file.writeBytes(URL("https://www.prydwen.gg$value").readBytes())
+                    } else if (path.endsWith("element")) {
+                        element = stringVal
+                    } else if (path.endsWith("relic")) {
+                        preferredRelics.add(stringVal.asField() to "")
+                    } else if (path.endsWith("relic_2")) {
+                        if (stringVal.isNotBlank()) {
+                            preferredRelics[preferredRelics.lastIndex] =
+                                preferredRelics[preferredRelics.lastIndex].copy(
+                                    second = stringVal.asField())
+                        }
+                    } else if (path.endsWith("planar")) {
+                        preferredOrnaments.push(stringVal.asField())
+                    } else if (path.contains("body")) {
+                        bodyStats.add(stringVal)
+                    } else if (path.contains("feet")) {
+                        feetStats.add(stringVal)
+                    } else if (path.contains("rope")) {
+                        ropeStats.add(stringVal)
+                    } else if (path.contains("sphere")) {
+                        sphereStats.add(stringVal)
+                    } else {
+                        throw IllegalStateException("Weird Match: ($path, $value) for $character")
+                    }
+                }
+                override fun pathMatches(path: String) = characterRegex.matches(path)
+            }).parseJsonObject(StringReader(rawCharacter))
+
+            characterLangContent.appendLine("\t<string name=\"character.${charVarName}\">" +
+                    "${character.replace("&", "&amp;")}</string>")
+
+            characterCodeContent
+                .append("\t${charEnumName}(")
+                .append("R.string.character_${charVarName}, ")
+                .append("R.drawable.character_${charVarName}_icon, ")
+                .append(if (hasSplash) "R.drawable.character_${charVarName}_splash, " else "null, ")
+                .append("Element.fromString(\"${element}\"), ")
+                .append("listOf(")
+            // Add Preferred Relic Sets
+            for ((first, second) in preferredRelics) {
+                characterCodeContent.append("(Relic.$first ")
+                if (second.isBlank()) {
+                    characterCodeContent.append("to null), ")
+                } else {
+                    characterCodeContent.append("to Relic.$second), ")
+                }
+            }
+            characterCodeContent.append("), listOf(")
+            // Add Preferred Planar Sets
+            for (ornament in preferredOrnaments) {
+                characterCodeContent.append("Ornament.$ornament, ")
+            }
+            characterCodeContent.append("), ")
+            // Add Body Stats
+            val stats = listOf(bodyStats, feetStats, ropeStats, sphereStats)
+            for (partStats in stats) {
+                characterCodeContent.append("listOf(")
+                for (stat in partStats) {
+                    characterCodeContent.append("Statistic.fromString(\"${stat}\"), ")
+                }
+                characterCodeContent.append("), ")
+            }
+            characterCodeContent.appendLine("),")
+        }
+        characterCodeFile.writeText(buildString {
             appendLine(codePackage).appendLine()
-            appendLine("enum RelicPreference(val relic: GenericRelic, vararg val characters: Character) {")
-            for ((relic, characters) in relicDatabase) {
-                append("\t${relic.split('.')[1]}(${relic}, ")
-                for (character in characters) {
-                    append("Character.${character}, ")
-                }
-                appendLine("),")
-            }
+            appendLine(importWriteAndDraw).appendLine()
+            appendLine("import edu.shch.hsr.relicanalyzer.hsr.Element")
+            appendLine("import edu.shch.hsr.relicanalyzer.hsr.Statistic")
+            appendLine()
+            appendLine(suppressSpellCheck)
+            appendLine("enum class Character (")
+            appendLine("\t@StringRes val charName: Int,")
+            appendLine("\t@DrawableRes val icon: Int,")
+            appendLine("\t@DrawableRes val splash: Int?,")
+            appendLine("\tval element: Element,")
+            appendLine("\tval relics: List<Pair<Relic, Relic?>>,")
+            appendLine("\tval ornaments: List<Ornament>,")
+            appendLine("\tval bodyStats: List<Statistic>,")
+            appendLine("\tval feetStats: List<Statistic>,")
+            appendLine("\tval ropeStats: List<Statistic>,")
+            appendLine("\tval sphereStats: List<Statistic>,")
+            appendLine(") {")
+            append(characterCodeContent.toString())
             appendLine("}")
-        })    }
-
-    register("devScraper") {
-        group = "scraping"
-        val url = URL("https://www.mobilemeta.gg/honkai-starrail/character/aventurine")
-        println(String(url.readBytes()))
+        })
+        characterLangFile.writeText(buildString {
+            appendLine("<resources>")
+            append(characterLangContent)
+            appendLine("</resources>")
+        })
     }
 
     register("scrapeResources") {
@@ -299,7 +360,6 @@ tasks {
         dependsOn(
             scrapeCharacters, scrapeRelics,
             scrapeCaverns, scrapeWorlds,
-            scrapeRelicPreferences
         )
     }
 }

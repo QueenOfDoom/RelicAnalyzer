@@ -18,8 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import edu.shch.hsr.relicanalyzer.hsr.Ornament
-import edu.shch.hsr.relicanalyzer.hsr.SimulatedUniverse
+import edu.shch.hsr.relicanalyzer.hsr.dynamic.Ornament
+import edu.shch.hsr.relicanalyzer.hsr.dynamic.SimulatedUniverse
 import edu.shch.hsr.relicanalyzer.ui.theme.DarkLavender
 
 @Composable()

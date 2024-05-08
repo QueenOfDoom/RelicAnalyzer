@@ -40,9 +40,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.times
-import edu.shch.hsr.relicanalyzer.hsr.CavernOfCorrosion
-import edu.shch.hsr.relicanalyzer.hsr.Character
-import edu.shch.hsr.relicanalyzer.hsr.Relic
+import edu.shch.hsr.relicanalyzer.hsr.dynamic.CavernOfCorrosion
+import edu.shch.hsr.relicanalyzer.hsr.dynamic.Character
+import edu.shch.hsr.relicanalyzer.hsr.dynamic.Relic
 import edu.shch.hsr.relicanalyzer.ui.theme.DarkLavender
 
 @Composable()
@@ -136,8 +136,8 @@ fun RelicButton(@DrawableRes img: Int, @StringRes text: Int) {
 @Composable()
 fun RelicCharacter(character: Character) {
     Image(
-        painter = painterResource(id = character.img),
-        contentDescription = stringResource(id = character.characterName),
+        painter = painterResource(id = character.icon),
+        contentDescription = stringResource(id = character.charName),
         contentScale = ContentScale.Crop,
         modifier = Modifier.size(64.dp)
             .clip(CircleShape)
@@ -168,7 +168,9 @@ fun RelicSetDetails(
             modifier = Modifier.padding(vertical = 10.dp)
         ) {
             items(Character.entries) { character ->
-                if (character.preferredRelics.contains(relic)) {
+                if (character.relics.any { (first, second) ->
+                    first == relic || second == relic
+                }) {
                     RelicCharacter(character)
                 }
             }

@@ -1,11 +1,45 @@
 <resources>
+	<string name="character">Character</string>
 	<string name="relic">Relic</string>
 	<string name="ornament">Planar Ornament</string>
+
 	<string name="relic.head">Head</string>
 	<string name="relic.hands">Hands</string>
 	<string name="relic.body">Body</string>
 	<string name="relic.feet">Feet</string>
+
 	<string name="ornament.sphere">Planar Sphere</string>
 	<string name="ornament.rope">Link Rope</string>
-	<string name="character">Character</string>
+
+	<string name="stat.hp">HP</string>
+	<string name="stat.atk">ATK</string>
+	<string name="stat.def">DEF</string>
+	<string name="stat.hp_percent">HP%</string>
+	<string name="stat.atk_percent">ATK%</string>
+	<string name="stat.def_percent">DEF%</string>
+	<string name="stat.crit_rate">CRIT Rate</string>
+	<string name="stat.crit_dmg">CRIT DMG</string>
+	<string name="stat.outgoing_healing">Outgoing Healing</string>
+	<string name="stat.effect_hit_rate">Effect Hit Rate</string>
+	<string name="stat.effect_res">Effect RES</string>
+	<string name="stat.break_effect">Break Effect</string>
+	<string name="stat.energy_regen_rate">Energy Regen Rate</string>
+	<string name="stat.speed">Speed</string>
+
+	<string name="stat.dmg.elemental">Elemental DMG</string>
+	<string name="stat.dmg.physical">Physical DMG</string>
+	<string name="stat.dmg.fire">Fire DMG</string>
+	<string name="stat.dmg.ice">Ice DMG</string>
+	<string name="stat.dmg.lightning">Lightning DMG</string>
+	<string name="stat.dmg.wind">Wind DMG</string>
+	<string name="stat.dmg.quantum">Quantum DMG</string>
+	<string name="stat.dmg.imaginary">Imaginary DMG</string>
+
+	<string name="element.physical">Physical</string>
+	<string name="element.fire">Fire</string>
+	<string name="element.ice">Ice</string>
+	<string name="element.lightning">Lightning</string>
+	<string name="element.wind">Wind</string>
+	<string name="element.quantum">Quantum</string>
+	<string name="element.imaginary">Imaginary</string>
 </resources>
