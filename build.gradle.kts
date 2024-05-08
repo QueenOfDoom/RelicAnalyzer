@@ -59,23 +59,29 @@ tasks {
                 val names = it[1]
                 assert(imageCodes.size == names.size)
                 val characterBaseUrl = "https://images.mobilemeta.gg/starrail/images/characters"
-                val charactersFile = File("${dataBasePath}/dynamic-characters.xml")
-                val characterContent = StringBuilder()
+                val charactersCodeFile = File("${codeBasePath}/Characters.kt")
+                val characterCodeContent = mutableListOf<String>()
+                val charactersLangFile = File("${dataBasePath}/dynamic-characters.xml")
+                val characterLangContent = mutableListOf<String>()
                 for ((code, name) in imageCodes.zip(names)) {
-                    val enumName = name.asField().lowercase()
-                    characterContent.appendLine("<string name=\"character.${enumName}\">${name}</string>")
-                    val image = File("${drawableBasePath}/character_${enumName}.png")
+                    val enumName = name.asField()
+                    characterCodeContent.add(enumName)
+                    val idName = enumName.lowercase()
+                    characterLangContent.add("<string name=\"character.${idName}\">${name}</string>")
+                    val image = File("${drawableBasePath}/character_${idName}.png")
                     if (!image.exists()) {
                         image.writeBytes(URL("$characterBaseUrl/${code}/${code}.png").readBytes())
                     }
                 }
-                charactersFile.writeText(
-                    """
-                <resources>
-                    $characterContent
-                </resources>
-            """.trimIndent()
-                )
+                charactersLangFile.writeText("<resources>\n\t${characterLangContent.joinToString("\n\t")}\n</resources>")
+                charactersCodeFile.writeText(buildString {
+                    appendLine(codePackage).appendLine()
+                    appendLine("enum class Character {")
+                    for (characterName in characterCodeContent) {
+                        appendLine("\t$characterName,")
+                    }
+                    appendLine("}")
+                })
             }
         ).scrape()
     }
@@ -217,11 +223,83 @@ tasks {
         ).scrape()
     }
 
+    val scrapeRelicPreferences = register("scrapeRelicPreferences") {
+        group = "scraping"
+
+        val characterDatabase = mutableMapOf<Int, String>()
+        val relicDatabase = mutableMapOf<String, List<String>>()
+
+        val characterIdRegex = Regex("\\\"characterId\\\":\\\"(\\d+)\\\"")
+        val characterImgRegex = Regex("src=\"https://images.mobilemeta.gg/starrail/static/icon/character/(\\d+).png\"")
+        val characterNameRegex = Regex("<div class=\"font-starrailweb text-shadow-emerald-500 text-3xl text-white\" style=\"text-shadow: rgb(255, 255, 255) 2px 2px;\">([^<]+)</div>")
+
+        val relicNameRegex = Regex("<div class=\"font-starrailweb my-2 text-2xl font-bold text-stone-200\">([^<]+)</div>")
+
+        ScrapeTask(
+            URL("https://www.mobilemeta.gg/honkai-starrail/character"),
+            listOf(Regex("href=\"/honkai-starrail/character/([^\"]+)\"")),
+            listOf {
+                val characters = it[0]
+                for (character in characters) {
+                    val characterUrl = URL("https://www.mobilemeta.gg/honkai-starrail/character/$character")
+                    val characterData = String(characterUrl.readBytes())
+                    val characterId = characterIdRegex.find(characterData)
+                        ?: throw IllegalStateException("Could not find Character ID for $character!")
+                    val characterName = characterNameRegex.find(characterData)
+                        ?: throw IllegalStateException("Could not find Character Name for $character!")
+                    characterDatabase[characterId.groupValues[1].toInt()] = characterName.groupValues[1].asField()
+                }
+            }
+        ).scrape()
+
+        ScrapeTask(
+            URL("https://www.mobilemeta.gg/honkai-starrail/database/relic"),
+            listOf(
+                Regex("href=\"/honkai-starrail/database/relic/(\\d+)\"")
+            ),
+            listOf {
+                val relicIds = it[0]
+                for (relicId in relicIds) {
+                    val relicUrl = URL("https://www.mobilemeta.gg/honkai-starrail/database/relic/$relicId")
+                    val relicData = String(relicUrl.readBytes())
+                    val relicName = relicNameRegex.find(relicData)
+                        ?: throw IllegalStateException("Could not find the Relic Name for Relic: $relicId")
+                    val characterIds = characterImgRegex.findAll(relicData)
+                    val relicType = if (relicId.startsWith("1")) "Relic" else "Ornament"
+                    relicDatabase["${relicType}.${relicName.groupValues[1].asField()}"] = characterIds.map { match ->
+                        characterDatabase[match.groupValues[1].toInt()]
+                            ?: throw IllegalStateException("There is some fuckin' error... Good Luck...")
+                    }.toList()
+                }
+            }
+        ).scrape()
+
+        val relicPreferencesFile = File("${codeBasePath}/RelicPreferences.kt")
+        relicPreferencesFile.writeText(buildString {
+            appendLine(codePackage).appendLine()
+            appendLine("enum RelicPreference(val relic: GenericRelic, vararg val characters: Character) {")
+            for ((relic, characters) in relicDatabase) {
+                append("\t${relic.split('.')[1]}(${relic}, ")
+                for (character in characters) {
+                    append("Character.${character}, ")
+                }
+                appendLine("),")
+            }
+            appendLine("}")
+        })    }
+
+    register("devScraper") {
+        group = "scraping"
+        val url = URL("https://www.mobilemeta.gg/honkai-starrail/character/aventurine")
+        println(String(url.readBytes()))
+    }
+
     register("scrapeResources") {
         group = "scraping"
         dependsOn(
             scrapeCharacters, scrapeRelics,
-            scrapeCaverns, scrapeWorlds
+            scrapeCaverns, scrapeWorlds,
+            scrapeRelicPreferences
         )
     }
 }
