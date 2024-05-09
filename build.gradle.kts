@@ -1,3 +1,4 @@
+import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Klaxon
 import com.beust.klaxon.PathMatcher
 import org.jetbrains.kotlin.backend.common.push
@@ -31,7 +32,7 @@ val drawableBasePath = "./app/src/main/res/drawable"
 val dataBasePath = "./app/src/main/res/values"
 
 fun String.asField() =
-    this.replace(Regex("[:,]"), "")
+    this.replace(Regex("[:,?]"), "")
         .replace(Regex("[()•]"), " ")
         .replace(Regex(" +"), " ").trim()
         .uppercase()
@@ -64,12 +65,16 @@ tasks {
             URL("https://www.mobilemeta.gg/honkai-starrail/database/relic"),
             listOf(
                 Regex("<div class=\"font-starrailweb text-yellow-400\">([^<]+)</div>"),
-                Regex("/static/icon/relic/([13]\\d{2}).png")
+                Regex("/static/icon/relic/([13]\\d{2}).png"),
+                Regex("<div class=\"font-starrailweb text-sm\\s+text-stone-300\">\\s*<span class=\"mx-2 text-yellow-500\">Set\\D*\\d<\\/span>([^<]+)")
             ),
             listOf {
                 val labels = it[0]
                 val imageCodes = it[1]
+                val setEffects = it[2]
+
                 assert(labels.size == imageCodes.size)
+
                 val relicsBaseUrl = "https://images.mobilemeta.gg/starrail/static/icon/relic"
 
                 val relicsCodeFile = File("${codeBasePath}/Relics.kt")
@@ -81,7 +86,10 @@ tasks {
                 val relicsLangFile = File("${dataBasePath}/dynamic-relics.xml")
                 val relicsLangContent = mutableListOf<String>()
 
-                for ((code, label) in imageCodes.zip(labels)) {
+                var setEffectIndex = 0
+                for ((index, code) in imageCodes.withIndex()) {
+                    val label = labels[index]
+
                     val isRelic = code.startsWith("1")
                     val isOrnament = code.startsWith("3")
                     if (!isRelic && !isOrnament) throw IllegalStateException("The 'API' appears to have changed, please check!")
@@ -100,6 +108,21 @@ tasks {
                             imageFile.writeBytes(URL("$relicsBaseUrl/${code}_${i}.png").readBytes())
                         }
                     }
+
+                    if (isRelic) {
+                        val halfSet = setEffects[setEffectIndex].replace("&#x27;", "\\'")
+                        val fullSet = setEffects[setEffectIndex + 1].replace("&#x27;", "\\'")
+                        relicsLangContent.add("<string name=\"${relicType}.${code}.half\">${halfSet}</string>")
+                        relicsLangContent.add("<string name=\"${relicType}.${code}.full\">${fullSet}</string>")
+                        relicEnumValue += "R.string.${relicType}_${code}_half, R.string.${relicType}_${code}_full"
+                        setEffectIndex += 2
+                    } else {
+                        val set = setEffects[setEffectIndex].replace("&#x27;", "\\'")
+                        relicsLangContent.add("<string name=\"${relicType}.${code}.set\">${set}</string>")
+                        relicEnumValue += "R.string.${relicType}_${code}_set"
+                        setEffectIndex += 1
+                    }
+
                     listRef.add("${relicEnumValue})")
                 }
                 relicsLangFile.writeText("<resources>\n\t${relicsLangContent.joinToString("\n\t")}\n</resources>")
@@ -113,7 +136,9 @@ tasks {
                         @DrawableRes val head: Int,
                         @DrawableRes val hands: Int,
                         @DrawableRes val body: Int,
-                        @DrawableRes val feet: Int
+                        @DrawableRes val feet: Int,
+                        @StringRes val halfSet: Int,
+                        @StringRes val fullSet: Int,
                     ) : GenericRelic {
                 """.trimIndent() + "\n\t${relicsCodeContent.joinToString(",\n\t")}\n}")
 
@@ -125,7 +150,8 @@ tasks {
                     enum class Ornament (
                         @StringRes val text: Int,
                         @DrawableRes val planarSphere: Int,
-                        @DrawableRes val linkRope: Int
+                        @DrawableRes val linkRope: Int,
+                        @StringRes val set: Int,
                     ): GenericRelic {
                 """.trimIndent() + "\n\t${ornamentsCodeContent.joinToString(",\n\t")}\n}")
             }
@@ -203,6 +229,7 @@ tasks {
             listOf(
                 ".*element$",
                 ".*path$",
+                ".*rarity$",
                 ".*cardImage\\..*\\.images\\.fallback\\.src",
                 ".*fullImage\\..*\\.images\\.fallback\\.src",
                 ".*buildData\\[\\d+\\]\\.relics\\[\\d+\\].relic(_2)?",
@@ -241,6 +268,7 @@ tasks {
 
             var element: String? = null
             var charPath: String? = null
+            var rarity = 0
             var hasSplash = false
             val preferredRelics = mutableListOf<Pair<String, String>>()
             val preferredOrnaments = mutableListOf<String>()
@@ -269,6 +297,8 @@ tasks {
                         element = stringVal.uppercase()
                     } else if (path.endsWith("path")) {
                         charPath = stringVal.uppercase()
+                    } else if (path.endsWith("rarity")) {
+                        rarity = stringVal.toInt()
                     } else if (path.endsWith("relic")) {
                         preferredRelics.add(stringVal.asField() to "")
                     } else if (path.endsWith("relic_2")) {
@@ -302,6 +332,7 @@ tasks {
                 .append("R.string.character_${charVarName}, ")
                 .append("R.drawable.character_${charVarName}_icon, ")
                 .append(if (hasSplash) "R.drawable.character_${charVarName}_splash, " else "null, ")
+                .append("Rarity.fromId(${rarity}), ")
                 .append("Element.${element}, ")
                 .append("Path.${charPath}, ")
                 .append("listOf(")
@@ -336,6 +367,7 @@ tasks {
             appendLine(importWriteAndDraw).appendLine()
             appendLine("import edu.shch.hsr.relicanalyzer.hsr.Element")
             appendLine("import edu.shch.hsr.relicanalyzer.hsr.Path")
+            appendLine("import edu.shch.hsr.relicanalyzer.hsr.Rarity")
             appendLine("import edu.shch.hsr.relicanalyzer.hsr.Statistic")
             appendLine()
             appendLine(suppressSpellCheck)
@@ -343,6 +375,7 @@ tasks {
             appendLine("\t@StringRes val charName: Int,")
             appendLine("\t@DrawableRes val icon: Int,")
             appendLine("\t@DrawableRes val splash: Int?,")
+            appendLine("\tval rarity: Rarity,")
             appendLine("\tval element: Element,")
             appendLine("\tval path: Path,")
             appendLine("\tval relics: List<Pair<Relic, Relic?>>,")
@@ -362,11 +395,162 @@ tasks {
         })
     }
 
+    val scrapeLightCones = register("scrapeLightCones") {
+        group = "scraping"
+        val lightConesUrl = URL("https://www.prydwen.gg/page-data/star-rail/light-cones/page-data.json")
+        val rawLightCones = String(lightConesUrl.readBytes())
+        val lightConeRegex = Regex(listOf(
+            ".*name$",
+            ".*path$",
+            ".*rarity$",
+            ".*stats\\.(hp|atk|def)\\.value_level_max$",
+            ".*skillName$",
+            ".*skillDescription\\.raw$"
+            // TODO: Potentially parse sub-stat-priority
+        ).joinToString("|") { "($it)" })
+
+        val lightConeImgRegex = Regex("<figure class=\"pi-item pi-image\">\\s*<a href=\"(https://static.wikia.nocookie.net/houkai-star-rail/images/[^\"]+)\" class=\"image image-thumbnail\"")
+        var lightConeName: String? = null
+        var pathName: String? = null
+        var rarity = 0
+        var stats: Triple<Int, Int, Int> = Triple(-1, -1, -1)
+
+        val codeContent = StringBuilder()
+        fun dumpLightCone() {
+            val enumName = lightConeName!!.asField()
+            val varName = enumName.lowercase()
+            with(codeContent) {
+                append("\t${enumName}(R.string.light_cone_${varName}, ")
+                append("R.drawable.light_cone_${varName}_lc, ")
+                append("R.drawable.light_cone_${varName}_art, ")
+                append("R.drawable.light_cone_${varName}_icon, ")
+                append("Path.${pathName!!.uppercase()}, ")
+                append("Rarity.fromId(${rarity}), ")
+                append("${stats.first}, ${stats.second}, ${stats.third}, ")
+                append("R.string.light_cone_skill_${varName}, ")
+                appendLine("R.string.light_cone_description_${varName}),")
+            }
+        }
+
+        val codeFile = File("${codeBasePath}/LightCones.kt")
+        val langFile = File("${dataBasePath}/dynamic-light-cones.xml")
+        val langContent = StringBuilder()
+
+        Klaxon().pathMatcher(object: PathMatcher {
+            override fun onMatch(path: String, value: Any) {
+                if (path.endsWith("name")) {
+                    if (lightConeName != null) dumpLightCone()
+
+                    lightConeName = value.toString()
+                    val varName = lightConeName!!.asField().lowercase()
+                    langContent.appendLine("\t<string name=\"light_cone.${varName}\">${
+                        lightConeName!!.replace("'", "\\'")
+                    }</string>")
+                    var slug = lightConeName!!
+                        .replace(" ", "_")
+                        .replace("?", "%3F")
+
+                    // Exception Handling
+                    if (slug == "Data_Bank") slug = "Data_Bank_(Light_Cone)"
+
+                    val imageMine = URL("https://honkai-star-rail.fandom.com/wiki/$slug")
+                    val rawWikiPage = String(imageMine.readBytes())
+                    val matches = lightConeImgRegex.findAll(rawWikiPage).toList()
+                    for ((index, match) in matches.withIndex()) {
+                        val url = URL(match.groupValues[1])
+                        val file = when(index) {
+                            0 -> File("${drawableBasePath}/light_cone_${varName}_lc.png")
+                            1 -> File("${drawableBasePath}/light_cone_${varName}_art.png")
+                            2 -> File("${drawableBasePath}/light_cone_${varName}_icon.png")
+                            else -> throw IllegalArgumentException("Too many images found for: $value")
+                        }
+                        if (!file.exists()) {
+                            file.writeBytes(url.readBytes())
+                        }
+                    }
+                    if (matches.size != 3) {
+                        throw MissingResourceException("Could not find all resources for Light Cone: $value")
+                    }
+                } else if (path.endsWith("path")) {
+                    pathName = value.toString().uppercase()
+                } else if (path.endsWith("rarity")) {
+                    rarity = value.toString().toInt()
+                } else if (path.endsWith("skillName")) {
+                    val varName = lightConeName!!.asField().lowercase()
+                    langContent.appendLine("\t<string name=\"light_cone.skill.${varName}\">${
+                        value.toString().replace("'", "\\'")
+                    }</string>")
+                } else if (path.endsWith("raw")) {
+                    val varName = lightConeName!!.asField().lowercase()
+
+                    val markup = Klaxon().parseJsonObject(StringReader(value.toString()))
+                    val parsedText = markup.array<JsonObject>("content")!!.first()
+                        .array<JsonObject>("content")!!.joinToString("") {
+                            val cleanValue = it.string("value")!!
+                                .replace("'", "\\'")
+
+                            if (it.array<JsonObject>("marks")?.isNotEmpty() == false) {
+                                cleanValue
+                            } else {
+                                // always assume bold
+                                "**${cleanValue}**"
+                            }
+                        }.trim()
+
+                    with(langContent) {
+                        appendLine("\t<string name=\"light_cone.description.${varName}\">${parsedText}</string>")
+                    }
+                } else if (path.endsWith("value_level_max")) {
+                    stats = if (path.contains("hp")) {
+                        stats.copy(first = value.toString().toInt())
+                    } else if (path.contains("atk")) {
+                        stats.copy(second = value.toString().toInt())
+                    } else {
+                        stats.copy(third = value.toString().toInt())
+                    }
+                }
+            }
+            override fun pathMatches(path: String) = lightConeRegex.matches(path)
+        }).parseJsonObject(StringReader(rawLightCones))
+        dumpLightCone()
+
+        codeFile.writeText(buildString {
+            appendLine(codePackage).appendLine()
+            appendLine(importWriteAndDraw).appendLine()
+            appendLine("import edu.shch.hsr.relicanalyzer.hsr.Path")
+            appendLine("import edu.shch.hsr.relicanalyzer.hsr.Rarity")
+            appendLine()
+            appendLine(suppressSpellCheck)
+            appendLine("enum class LightCone (")
+            appendLine("\t@StringRes val text: Int,")
+            appendLine("\t@DrawableRes val lightCone: Int,")
+            appendLine("\t@DrawableRes val art: Int?,")
+            appendLine("\t@DrawableRes val icon: Int?,")
+            appendLine("\tval path: Path,")
+            appendLine("\tval rarity: Rarity,")
+            appendLine("\tval hp: Int,")
+            appendLine("\tval atk: Int,")
+            appendLine("\tval def: Int,")
+            appendLine("\t@StringRes val skill: Int,")
+            appendLine("\t@StringRes val description: Int")
+            appendLine(") {")
+            append(codeContent.toString())
+            appendLine("}")
+        })
+
+        langFile.writeText(buildString {
+            appendLine("<resources>")
+            append(langContent)
+            appendLine("</resources>")
+        })
+    }
+
     register("scrapeResources") {
         group = "scraping"
         dependsOn(
             scrapeCharacters, scrapeRelics,
             scrapeCaverns, scrapeWorlds,
+            scrapeLightCones
         )
     }
 }

@@ -173,3 +173,18 @@ enum class Path(
     PRESERVATION(R.string.path_preservation, R.drawable.path_preservation),
     ABUNDANCE(R.string.path_abundance, R.drawable.path_abundance)
 }
+
+enum class Rarity(val numeric: Int) {
+    SUPER_RARE(5),
+    RARE(4),
+    COMMON(3);
+
+    companion object {
+        fun fromId(id: Int) = when(id) {
+            SUPER_RARE.numeric -> SUPER_RARE
+            RARE.numeric -> RARE
+            COMMON.numeric -> COMMON
+            else -> throw IllegalArgumentException("Illegal Rarity ID: $id")
+        }
+    }
+}
