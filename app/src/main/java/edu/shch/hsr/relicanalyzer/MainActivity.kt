@@ -54,7 +54,10 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-private fun RelicOrnamentChoice(onCharacter: () -> Unit, onRelicType: (RelicType) -> Unit) {
+private fun RelicOrnamentChoice(
+    onCharacter: () -> Unit,
+    onRelicType: (RelicType) -> Unit
+) {
     val isRelic: MutableState<Boolean> = remember { mutableStateOf(true) }
     val relic = R.drawable.relic_117_0
     val ornament = R.drawable.ornament_311_0
@@ -179,10 +182,16 @@ fun RelicAnalyzer(modifier: Modifier = Modifier, dispatcher: OnBackPressedDispat
         } else {
             when (relicType) {
                 RelicType.Relic -> {
-                    RelicView(dispatcher) { relicType = null }
+                    RelicView(
+                        dispatcher,
+                        Modifier.padding(top = 60.dp)
+                    ) { relicType = null }
                 }
                 RelicType.PlanarOrnament -> {
-                    OrnamentView(dispatcher) { relicType = null }
+                    OrnamentView(
+                        dispatcher,
+                        Modifier.padding(top = 60.dp)
+                    ) { relicType = null }
                 }
                 null -> RelicOrnamentChoice(
                     { isInCharacter = true },

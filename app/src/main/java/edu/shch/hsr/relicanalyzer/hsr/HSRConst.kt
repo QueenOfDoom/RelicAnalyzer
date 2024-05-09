@@ -1,5 +1,6 @@
 package edu.shch.hsr.relicanalyzer.hsr
 
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import edu.shch.hsr.relicanalyzer.R
 
@@ -24,31 +25,33 @@ enum class RelicType {
 
 interface GenericRelic
 
+@Suppress("unused")
 enum class Statistic(
-    @StringRes val text: Int
+    @StringRes val text: Int,
+    @DrawableRes val image: Int
 ) {
-    HP(R.string.stat_hp),
-    ATK(R.string.stat_atk),
-    DEF(R.string.stat_def),
-    HP_PERCENT(R.string.stat_hp_percent),
-    ATK_PERCENT(R.string.stat_atk_percent),
-    DEF_PERCENT(R.string.stat_def_percent),
-    CRIT_RATE(R.string.stat_crit_rate),
-    CRIT_DMG(R.string.stat_crit_dmg),
-    OUTGOING_HEALING(R.string.stat_outgoing_healing),
-    EFFECT_HIT_RATE(R.string.stat_effect_hit_rate),
-    EFFECT_RES(R.string.stat_effect_res),
-    ENERGY_REGEN_RATE(R.string.stat_energy_regen_rate),
-    BREAK_EFFECT(R.string.stat_break_effect),
-    SPEED(R.string.stat_speed),
+    HP(R.string.stat_hp, R.drawable.stat_hp),
+    ATK(R.string.stat_atk, R.drawable.stat_atk),
+    DEF(R.string.stat_def, R.drawable.stat_def),
+    HP_PERCENT(R.string.stat_hp_percent, R.drawable.stat_hp),
+    ATK_PERCENT(R.string.stat_atk_percent, R.drawable.stat_atk),
+    DEF_PERCENT(R.string.stat_def_percent, R.drawable.stat_def),
+    CRIT_RATE(R.string.stat_crit_rate, R.drawable.stat_crit_rate),
+    CRIT_DMG(R.string.stat_crit_dmg, R.drawable.stat_crit_dmg),
+    OUTGOING_HEALING(R.string.stat_outgoing_healing, R.drawable.stat_outgoing_heal_boost),
+    EFFECT_HIT_RATE(R.string.stat_effect_hit_rate, R.drawable.stat_effect_hit_rate),
+    EFFECT_RES(R.string.stat_effect_res, R.drawable.stat_effect_res),
+    ENERGY_REGEN_RATE(R.string.stat_energy_regen_rate, R.drawable.stat_energy_recharge),
+    BREAK_EFFECT(R.string.stat_break_effect, R.drawable.stat_break_effect),
+    SPEED(R.string.stat_speed, R.drawable.stat_speed),
 
-    PHYSICAL_DAMAGE(R.string.stat_dmg_physical),
-    FIRE_DAMAGE(R.string.stat_dmg_fire),
-    ICE_DAMAGE(R.string.stat_dmg_ice),
-    LIGHTNING_DAMAGE(R.string.stat_dmg_lightning),
-    WIND_DAMAGE(R.string.stat_dmg_wind),
-    QUANTUM_DAMAGE(R.string.stat_dmg_quantum),
-    IMAGINARY_DAMAGE(R.string.stat_dmg_imaginary);
+    PHYSICAL_DAMAGE(R.string.stat_dmg_physical, R.drawable.stat_damage_physical),
+    FIRE_DAMAGE(R.string.stat_dmg_fire, R.drawable.stat_damage_fire),
+    ICE_DAMAGE(R.string.stat_dmg_ice, R.drawable.stat_damage_ice),
+    LIGHTNING_DAMAGE(R.string.stat_dmg_lightning, R.drawable.stat_damage_lightning),
+    WIND_DAMAGE(R.string.stat_dmg_wind, R.drawable.stat_damage_wind),
+    QUANTUM_DAMAGE(R.string.stat_dmg_quantum, R.drawable.stat_damage_quantum),
+    IMAGINARY_DAMAGE(R.string.stat_dmg_imaginary, R.drawable.stat_damage_imaginary);
 
     companion object {
         /**
@@ -85,6 +88,7 @@ enum class Statistic(
     }
 }
 
+@Suppress("unused")
 val BodyMainStats = listOf(
     Statistic.HP_PERCENT,
     Statistic.ATK_PERCENT,
@@ -95,6 +99,7 @@ val BodyMainStats = listOf(
     Statistic.EFFECT_HIT_RATE
 )
 
+@Suppress("unused")
 val FootMainStats = listOf(
     Statistic.HP_PERCENT,
     Statistic.ATK_PERCENT,
@@ -102,6 +107,7 @@ val FootMainStats = listOf(
     Statistic.SPEED
 )
 
+@Suppress("unused")
 val PlanarSphereMainStats = listOf(
     Statistic.HP_PERCENT,
     Statistic.ATK_PERCENT,
@@ -115,6 +121,7 @@ val PlanarSphereMainStats = listOf(
     Statistic.IMAGINARY_DAMAGE
 )
 
+@Suppress("unused")
 val LinkRopeMainStats = listOf(
     Statistic.HP_PERCENT,
     Statistic.ATK_PERCENT,
@@ -123,6 +130,7 @@ val LinkRopeMainStats = listOf(
     Statistic.ENERGY_REGEN_RATE
 )
 
+@Suppress("unused")
 val SubStats = listOf(
     Statistic.HP,
     Statistic.ATK,
@@ -138,6 +146,7 @@ val SubStats = listOf(
     Statistic.SPEED
 )
 
+@Suppress("unused")
 enum class Element(
     @StringRes val text: Int,
 ) {
