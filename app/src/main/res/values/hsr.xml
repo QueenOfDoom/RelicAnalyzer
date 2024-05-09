@@ -42,4 +42,12 @@
 	<string name="element.wind">Wind</string>
 	<string name="element.quantum">Quantum</string>
 	<string name="element.imaginary">Imaginary</string>
+
+	<string name="path.destruction">Destruction</string>
+	<string name="path.hunt">Hunt</string>
+	<string name="path.erudition">Erudition</string>
+	<string name="path.harmony">Harmony</string>
+	<string name="path.nihility">Nihility</string>
+	<string name="path.preservation">Preservation</string>
+	<string name="path.abundance">Abundance</string>
 </resources>

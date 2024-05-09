@@ -202,6 +202,7 @@ tasks {
         val characterRegex = Regex(
             listOf(
                 ".*element$",
+                ".*path$",
                 ".*cardImage\\..*\\.images\\.fallback\\.src",
                 ".*fullImage\\..*\\.images\\.fallback\\.src",
                 ".*buildData\\[\\d+\\]\\.relics\\[\\d+\\].relic(_2)?",
@@ -239,6 +240,7 @@ tasks {
             val rawCharacter = String(characterUrl.readBytes())
 
             var element: String? = null
+            var charPath: String? = null
             var hasSplash = false
             val preferredRelics = mutableListOf<Pair<String, String>>()
             val preferredOrnaments = mutableListOf<String>()
@@ -264,7 +266,9 @@ tasks {
                         if (file.exists()) return
                         file.writeBytes(URL("https://www.prydwen.gg$value").readBytes())
                     } else if (path.endsWith("element")) {
-                        element = stringVal
+                        element = stringVal.uppercase()
+                    } else if (path.endsWith("path")) {
+                        charPath = stringVal.uppercase()
                     } else if (path.endsWith("relic")) {
                         preferredRelics.add(stringVal.asField() to "")
                     } else if (path.endsWith("relic_2")) {
@@ -298,7 +302,8 @@ tasks {
                 .append("R.string.character_${charVarName}, ")
                 .append("R.drawable.character_${charVarName}_icon, ")
                 .append(if (hasSplash) "R.drawable.character_${charVarName}_splash, " else "null, ")
-                .append("Element.fromString(\"${element}\"), ")
+                .append("Element.${element}, ")
+                .append("Path.${charPath}, ")
                 .append("listOf(")
             // Add Preferred Relic Sets
             for ((first, second) in preferredRelics) {
@@ -330,6 +335,7 @@ tasks {
             appendLine(codePackage).appendLine()
             appendLine(importWriteAndDraw).appendLine()
             appendLine("import edu.shch.hsr.relicanalyzer.hsr.Element")
+            appendLine("import edu.shch.hsr.relicanalyzer.hsr.Path")
             appendLine("import edu.shch.hsr.relicanalyzer.hsr.Statistic")
             appendLine()
             appendLine(suppressSpellCheck)
@@ -338,6 +344,7 @@ tasks {
             appendLine("\t@DrawableRes val icon: Int,")
             appendLine("\t@DrawableRes val splash: Int?,")
             appendLine("\tval element: Element,")
+            appendLine("\tval path: Path,")
             appendLine("\tval relics: List<Pair<Relic, Relic?>>,")
             appendLine("\tval ornaments: List<Ornament>,")
             appendLine("\tval bodyStats: List<Statistic>,")

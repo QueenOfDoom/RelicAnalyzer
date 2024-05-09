@@ -149,32 +149,27 @@ val SubStats = listOf(
 @Suppress("unused")
 enum class Element(
     @StringRes val text: Int,
+    @DrawableRes val image: Int,
 ) {
-    PHYSICAL(R.string.element_physical),
-    FIRE(R.string.element_fire),
-    ICE(R.string.element_ice),
-    LIGHTNING(R.string.element_lightning),
-    WIND(R.string.element_wind),
-    QUANTUM(R.string.element_quantum),
-    IMAGINARY(R.string.element_imaginary);
+    PHYSICAL(R.string.element_physical, R.drawable.element_physical),
+    FIRE(R.string.element_fire, R.drawable.element_fire),
+    ICE(R.string.element_ice, R.drawable.element_ice),
+    LIGHTNING(R.string.element_lightning, R.drawable.element_lightning),
+    WIND(R.string.element_wind, R.drawable.element_wind),
+    QUANTUM(R.string.element_quantum, R.drawable.element_quantum),
+    IMAGINARY(R.string.element_imaginary, R.drawable.element_imaginary);
+}
 
-    companion object {
-        /**
-         * Redundant Function, so that I can convert
-         * textual information into structured information.
-         *
-         * Copies the string-values from the `hsr.xml`
-         * resource file.
-         */
-        fun fromString(element: String) = when(element) {
-            "Physical" -> PHYSICAL
-            "Fire" -> FIRE
-            "Ice" -> ICE
-            "Lightning" -> LIGHTNING
-            "Wind" -> WIND
-            "Quantum" -> QUANTUM
-            "Imaginary" -> IMAGINARY
-            else -> throw IllegalArgumentException("Unknown Element: $element")
-        }
-    }
+@Suppress("unused")
+enum class Path(
+    @StringRes val text: Int,
+    @DrawableRes val image: Int,
+) {
+    DESTRUCTION(R.string.path_destruction, R.drawable.path_destruction),
+    HUNT(R.string.path_hunt, R.drawable.path_hunt),
+    ERUDITION(R.string.path_erudition, R.drawable.path_erudition),
+    HARMONY(R.string.path_harmony, R.drawable.path_harmony),
+    NIHILITY(R.string.path_nihility, R.drawable.path_nihility),
+    PRESERVATION(R.string.path_preservation, R.drawable.path_preservation),
+    ABUNDANCE(R.string.path_abundance, R.drawable.path_abundance)
 }
