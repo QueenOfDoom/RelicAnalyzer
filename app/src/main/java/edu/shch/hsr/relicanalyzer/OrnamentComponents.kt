@@ -35,6 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
+import edu.shch.hsr.relicanalyzer.hsr.OrnamentSlot
 import edu.shch.hsr.relicanalyzer.hsr.dynamic.Character
 import edu.shch.hsr.relicanalyzer.hsr.dynamic.Ornament
 import edu.shch.hsr.relicanalyzer.hsr.dynamic.SimulatedUniverse
@@ -124,9 +125,9 @@ fun OrnamentsBySimulatedUniverseWorlds(
 }
 
 @Composable()
-fun OrnamentButton(@DrawableRes img: Int, @StringRes text: Int) {
+fun OrnamentButton(@DrawableRes img: Int, @StringRes text: Int, onClick: () -> Unit) {
     ElevatedButton(
-        onClick = { /*TODO*/ },
+        onClick = { onClick() },
         border = BorderStroke(4.dp, DarkLavender),
         modifier = Modifier.size(180.dp),
 
@@ -150,7 +151,8 @@ fun OrnamentButton(@DrawableRes img: Int, @StringRes text: Int) {
 @Composable()
 fun OrnamentSetDetails(
     ornament: Ornament,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: (OrnamentSlot) -> Unit
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -182,12 +184,16 @@ fun OrnamentSetDetails(
             modifier = Modifier.padding(top = spacing)
         ) {
             Column {
-                OrnamentButton(img = ornament.planarSphere, text = R.string.ornament_sphere)
+                OrnamentButton(img = ornament.planarSphere, text = R.string.ornament_sphere) {
+                    onClick(OrnamentSlot.PlanarSphere)
+                }
             }
             Column(
                 modifier = Modifier.offset(y = 90.dp + spacing)
             ) {
-                OrnamentButton(img = ornament.linkRope, text = R.string.ornament_rope)
+                OrnamentButton(img = ornament.linkRope, text = R.string.ornament_rope) {
+                    onClick(OrnamentSlot.LinkRope)
+                }
             }
         }
     }
@@ -196,13 +202,17 @@ fun OrnamentSetDetails(
 @Composable()
 fun OrnamentView(
     dispatcher: OnBackPressedDispatcher,
+    showMaintenanceDialogue: () -> Unit,
     modifier: Modifier = Modifier,
     back: () -> Unit
 ) {
     var ornament: Ornament? by rememberSaveable { mutableStateOf(null) }
+    var ornamentSlot: OrnamentSlot? by rememberSaveable { mutableStateOf(null) }
 
     dispatcher.addCallback {
-        if (ornament != null) {
+        if (ornamentSlot != null) {
+            ornamentSlot = null
+        } else if (ornament != null) {
             ornament = null
         } else back()
     }
@@ -213,10 +223,13 @@ fun OrnamentView(
         ) {
             ornament = it
         }
-    } else {
+    } else if (ornamentSlot == null) {
         OrnamentSetDetails(
             ornament = ornament!!,
             modifier = modifier
-        )
+        ) { ornamentSlot = it }
+    } else {
+        ornamentSlot = null
+        showMaintenanceDialogue()
     }
 }

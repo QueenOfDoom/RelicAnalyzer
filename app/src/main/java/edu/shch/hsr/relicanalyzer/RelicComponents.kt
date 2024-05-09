@@ -52,6 +52,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.window.Dialog
+import edu.shch.hsr.relicanalyzer.hsr.RelicSlot
 import edu.shch.hsr.relicanalyzer.hsr.dynamic.CavernOfCorrosion
 import edu.shch.hsr.relicanalyzer.hsr.dynamic.Character
 import edu.shch.hsr.relicanalyzer.hsr.dynamic.Relic
@@ -143,9 +144,9 @@ fun RelicsByCavernsOfCorrosion(
 }
 
 @Composable()
-fun RelicButton(@DrawableRes img: Int, @StringRes text: Int) {
+fun RelicButton(@DrawableRes img: Int, @StringRes text: Int, onClick: () -> Unit) {
     ElevatedButton(
-        onClick = { /*TODO*/ },
+        onClick = { onClick() },
         border = BorderStroke(4.dp, DarkLavender),
         modifier = Modifier.size(180.dp),
 
@@ -245,7 +246,8 @@ fun RelicSetDetailDialog(relic: Relic, onDismissRequest: () -> Unit) {
 @Composable
 fun RelicSetDetails(
     relic: Relic,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: (RelicSlot) -> Unit
 ) {
     val listState = rememberLazyListState()
     val openSetInfo = remember { mutableStateOf(false) }
@@ -290,9 +292,9 @@ fun RelicSetDetails(
             modifier = Modifier.padding(top = spacing)
         ) {
             Column {
-                RelicButton(img = relic.head, text = R.string.relic_head)
+                RelicButton(img = relic.head, text = R.string.relic_head) { onClick(RelicSlot.Head) }
                 Spacer(modifier = Modifier.height(spacing))
-                RelicButton(img = relic.body, text = R.string.relic_body)
+                RelicButton(img = relic.body, text = R.string.relic_body) { onClick(RelicSlot.Body) }
             }
             Column(
                 modifier = Modifier.offset(y = 90.dp - 40.dp + spacing / 2)
@@ -310,9 +312,9 @@ fun RelicSetDetails(
                         fontSize = 4.em
                     )
                 }
-                RelicButton(img = relic.hands, text = R.string.relic_hands)
+                RelicButton(img = relic.hands, text = R.string.relic_hands) { onClick(RelicSlot.Hands) }
                 Spacer(modifier = Modifier.height(spacing))
-                RelicButton(img = relic.feet, text = R.string.relic_feet)
+                RelicButton(img = relic.feet, text = R.string.relic_feet) { onClick(RelicSlot.Feet) }
             }
         }
     }
@@ -321,13 +323,17 @@ fun RelicSetDetails(
 @Composable()
 fun RelicView(
     dispatcher: OnBackPressedDispatcher,
+    showMaintenanceDialogue: () -> Unit,
     modifier: Modifier = Modifier,
     back: () -> Unit
 ) {
     var relic: Relic? by rememberSaveable { mutableStateOf(null) }
+    var relicSlot: RelicSlot? by rememberSaveable { mutableStateOf(null) }
 
     dispatcher.addCallback {
-        if (relic != null) {
+        if (relicSlot != null) {
+            relicSlot = null
+        } else if (relic != null) {
             relic = null
         } else back()
     }
@@ -336,10 +342,13 @@ fun RelicView(
         RelicsByCavernsOfCorrosion(
             modifier = modifier
         ) { relic = it }
-    } else {
+    } else if (relicSlot == null) {
         RelicSetDetails(
             relic = relic!!,
             modifier = modifier
-        )
+        ) { relicSlot = it }
+    } else {
+        relicSlot = null
+        showMaintenanceDialogue()
     }
 }

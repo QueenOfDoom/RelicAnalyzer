@@ -1,5 +1,6 @@
 package edu.shch.hsr.relicanalyzer
 
+import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedDispatcher
@@ -7,17 +8,23 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -33,14 +40,25 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
+import coil.ImageLoader
+import coil.compose.rememberAsyncImagePainter
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
+import coil.request.ImageRequest
+import coil.size.Size
 import edu.shch.hsr.relicanalyzer.hsr.RelicType
 import edu.shch.hsr.relicanalyzer.ui.theme.DarkLavender
+import edu.shch.hsr.relicanalyzer.ui.theme.OverlayLavender
+import edu.shch.hsr.relicanalyzer.ui.theme.PlainAssWhite
 import edu.shch.hsr.relicanalyzer.ui.theme.RelicAnalyzerTheme
+import edu.shch.hsr.relicanalyzer.ui.theme.WiltingLavender
 import kotlin.math.max
 
 class MainActivity : ComponentActivity() {
@@ -188,28 +206,79 @@ private fun RelicOrnamentChoice(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RelicAnalyzer(modifier: Modifier = Modifier, dispatcher: OnBackPressedDispatcher) {
     var relicType: RelicType? by rememberSaveable { mutableStateOf(null) }
+    var showMaintenanceDialogue: Boolean by rememberSaveable { mutableStateOf(false) }
     var isInCharacter: Boolean by rememberSaveable { mutableStateOf(false) }
     var isInLightCones: Boolean by rememberSaveable { mutableStateOf(false) }
 
+    val context = LocalContext.current
+    val imageLoader = ImageLoader.Builder(context)
+        .components {
+            if (SDK_INT >= 28) {
+                add(ImageDecoderDecoder.Factory())
+            } else {
+                add(GifDecoder.Factory())
+            }
+        }.build()
+
+    if (showMaintenanceDialogue) {
+        BasicAlertDialog(
+            onDismissRequest = { showMaintenanceDialogue = false },
+            content = {
+                Column (
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.SpaceEvenly,
+                    modifier = Modifier
+                        .fillMaxWidth(0.8f)
+                        .fillMaxHeight(0.5f)
+                        .background(OverlayLavender, RoundedCornerShape(64.dp))
+                        .border(4.dp, WiltingLavender, shape = RoundedCornerShape(64.dp))
+                        .padding(top = 40.dp)
+                ) {
+                    Text(
+                        text = "押さないでよ！",
+                        fontSize = 7.em,
+                        fontWeight = FontWeight.Bold,
+                        color = PlainAssWhite
+                    )
+                    Image(
+                        painter = rememberAsyncImagePainter(
+                            ImageRequest.Builder(context).data(data = R.drawable.herta_kuru)
+                                .apply(block = {
+                                    size(Size.ORIGINAL)
+                                }).build(),
+                            imageLoader = imageLoader
+                        ),
+                        contentDescription = null,
+                        modifier = modifier.fillMaxWidth(),
+                    )
+                }
+            })
+    }
+
     Surface(modifier = modifier, color = MaterialTheme.colorScheme.background) {
         if (isInCharacter) {
-            TODO()
+            isInCharacter = false
+            showMaintenanceDialogue = true
         } else if(isInLightCones) {
-            TODO()
+            isInLightCones = false
+            showMaintenanceDialogue = true
         } else {
             when (relicType) {
                 RelicType.Relic -> {
                     RelicView(
                         dispatcher,
+                        { showMaintenanceDialogue = true },
                         Modifier.padding(top = 60.dp)
                     ) { relicType = null }
                 }
                 RelicType.PlanarOrnament -> {
                     OrnamentView(
                         dispatcher,
+                        { showMaintenanceDialogue = true },
                         Modifier.padding(top = 60.dp)
                     ) { relicType = null }
                 }
