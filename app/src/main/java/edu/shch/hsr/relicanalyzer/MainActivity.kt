@@ -10,8 +10,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -56,6 +58,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun RelicOrnamentChoice(
     onCharacter: () -> Unit,
+    onLightCone: () -> Unit,
     onRelicType: (RelicType) -> Unit
 ) {
     val isRelic: MutableState<Boolean> = remember { mutableStateOf(true) }
@@ -153,7 +156,7 @@ private fun RelicOrnamentChoice(
                 }
             }
         }
-        Row {
+        Column {
             ElevatedButton(
                 onClick = { onCharacter() },
                 border = BorderStroke(
@@ -167,6 +170,20 @@ private fun RelicOrnamentChoice(
                     modifier = Modifier.padding(vertical = 10.dp)
                 )
             }
+            Spacer(modifier = Modifier.height(30.dp))
+            ElevatedButton(
+                onClick = { onLightCone() },
+                border = BorderStroke(
+                    4.dp, DarkLavender
+                ),
+                modifier = Modifier.fillMaxWidth(fraction = 0.8f)
+            ) {
+                Text(
+                    text = stringResource(id = R.string.lightcone),
+                    fontSize = 7.em,
+                    modifier = Modifier.padding(vertical = 10.dp)
+                )
+            }
         }
     }
 }
@@ -175,9 +192,12 @@ private fun RelicOrnamentChoice(
 fun RelicAnalyzer(modifier: Modifier = Modifier, dispatcher: OnBackPressedDispatcher) {
     var relicType: RelicType? by rememberSaveable { mutableStateOf(null) }
     var isInCharacter: Boolean by rememberSaveable { mutableStateOf(false) }
+    var isInLightCones: Boolean by rememberSaveable { mutableStateOf(false) }
 
     Surface(modifier = modifier, color = MaterialTheme.colorScheme.background) {
         if (isInCharacter) {
+            TODO()
+        } else if(isInLightCones) {
             TODO()
         } else {
             when (relicType) {
@@ -195,6 +215,7 @@ fun RelicAnalyzer(modifier: Modifier = Modifier, dispatcher: OnBackPressedDispat
                 }
                 null -> RelicOrnamentChoice(
                     { isInCharacter = true },
+                    { isInLightCones = true },
                     { type -> relicType = type }
                 )
             }
