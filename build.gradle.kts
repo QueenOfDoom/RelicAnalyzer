@@ -436,6 +436,7 @@ tasks {
         ).joinToString("|") { "($it)" })
 
         val lightConeImgRegex = Regex("<figure class=\"pi-item pi-image\">\\s*<a href=\"(https://static.wikia.nocookie.net/houkai-star-rail/images/[^\"]+)\" class=\"image image-thumbnail\"")
+        val lightConeLabelRegex = Regex("<span class=\"wds-tabs__tab-label\">\\s*(Light Cone|Icon|Full Artwork)\\s*</span>")
         var lightConeName: String? = null
         var pathName: String? = null
         var rarity = 0
@@ -483,20 +484,26 @@ tasks {
 
                     val imageMine = URL("https://honkai-star-rail.fandom.com/wiki/$slug")
                     val rawWikiPage = String(imageMine.readBytes())
-                    val matches = lightConeImgRegex.findAll(rawWikiPage).toList()
-                    for ((index, match) in matches.withIndex()) {
+                    val imageMatches = lightConeImgRegex.findAll(rawWikiPage).toList()
+                    val labelMatches = lightConeLabelRegex.findAll(rawWikiPage).map { when(it.groupValues[1]) {
+                        "Light Cone" -> "lc"
+                        "Icon" -> "icon"
+                        "Full Artwork" -> "art"
+                        else -> throw IllegalStateException("Encountered Unknown Card-Type: ${it.groupValues[1]}")
+                    }}.toList()
+                    for ((index, match) in imageMatches.withIndex()) {
                         val url = URL(match.groupValues[1])
                         val file = when(index) {
-                            0 -> File("${drawableBasePath}/light_cone_${varName}_lc.png")
-                            1 -> File("${drawableBasePath}/light_cone_${varName}_art.png")
-                            2 -> File("${drawableBasePath}/light_cone_${varName}_icon.png")
+                            0 -> File("${drawableBasePath}/light_cone_${varName}_${labelMatches[0]}.png")
+                            1 -> File("${drawableBasePath}/light_cone_${varName}_${labelMatches[1]}.png")
+                            2 -> File("${drawableBasePath}/light_cone_${varName}_${labelMatches[2]}.png")
                             else -> throw IllegalArgumentException("Too many images found for: $value")
                         }
                         if (!file.exists()) {
                             file.writeBytes(url.readBytes())
                         }
                     }
-                    if (matches.size != 3) {
+                    if (imageMatches.size != 3) {
                         throw MissingResourceException("Could not find all resources for Light Cone: $value")
                     }
                 } else if (path.endsWith("path")) {
