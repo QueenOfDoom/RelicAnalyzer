@@ -54,6 +54,7 @@
 
 	<!-- UI Elements -->
 	<string name="ui.set.info" translatable="false">Set Info</string>
+	<string name="ui.set.ornament" translatable="false">Ornament Set</string>
 	<string name="ui.set.half" translatable="false">2-Piece Set</string>
 	<string name="ui.set.full" translatable="false">4-Piece Set</string>
 

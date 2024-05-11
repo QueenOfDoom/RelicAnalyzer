@@ -184,14 +184,14 @@ fun OrnamentSetDetailDialog(ornament: Ornament, onDismissRequest: () -> Unit) {
                 .fillMaxHeight(1f)
         ) {
             Column(
-                verticalArrangement = Arrangement.SpaceEvenly,
+                verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .height(420.dp)
                     .padding(20.dp)
             ) {
                 Text(
-                    text = stringResource(id = R.string.ui_set_half),
+                    text = stringResource(id = R.string.ui_set_ornament),
                     fontSize = 4.3.em,
                     fontFamily = saibaFamily,
                     textAlign = TextAlign.Center
