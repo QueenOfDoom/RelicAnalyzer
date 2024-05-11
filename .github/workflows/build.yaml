@@ -32,7 +32,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: application
-          path: app/debug/app-debug.apk
+          path: ./app/debug/app-debug.apk
           compression-level: 9
       # https://blog.logrocket.com/android-ci-cd-using-github-actions/
       # https://developer.android.com/studio/publish/app-signing#generate-key

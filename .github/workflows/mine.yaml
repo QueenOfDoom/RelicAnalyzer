@@ -29,9 +29,9 @@ jobs:
         with:
           name: resources
           path: |
-            /app/src/main/res/drawable
-            /app/src/main/res/values
-            /app/src/main/java/edu/shch/hsr/relicanalyzer/hsr/dynamic
+            ./app/src/main/res/drawable
+            ./app/src/main/res/values
+            ./app/src/main/java/edu/shch/hsr/relicanalyzer/hsr/dynamic
           compression-level: 9
       # https://blog.logrocket.com/android-ci-cd-using-github-actions/
       # https://developer.android.com/studio/publish/app-signing#generate-key
