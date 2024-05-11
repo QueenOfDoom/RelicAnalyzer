@@ -39,6 +39,11 @@ fun String.asField() =
         .replace(Regex("[ -.]"), "_")
         .replace(Regex("_+"), "_")
 
+fun String.cleanLang() =
+    this.replace("'", "\\'")
+        .replace("&#x27;", "\\'")
+        .replace("%", "%%")
+
 fun prepareScraping() {
     val dir = File("app/src/main/java/edu/shch/hsr/relicanalyzer/hsr/dynamic")
     if (!dir.exists()) {
@@ -123,14 +128,14 @@ tasks {
                     }
 
                     if (isRelic) {
-                        val halfSet = setEffects[setEffectIndex].replace("&#x27;", "\\'")
-                        val fullSet = setEffects[setEffectIndex + 1].replace("&#x27;", "\\'")
+                        val halfSet = setEffects[setEffectIndex].cleanLang()
+                        val fullSet = setEffects[setEffectIndex + 1].cleanLang()
                         relicsLangContent.add("<string name=\"${relicType}.${code}.half\">${halfSet}</string>")
                         relicsLangContent.add("<string name=\"${relicType}.${code}.full\">${fullSet}</string>")
                         relicEnumValue += "R.string.${relicType}_${code}_half, R.string.${relicType}_${code}_full"
                         setEffectIndex += 2
                     } else {
-                        val set = setEffects[setEffectIndex].replace("&#x27;", "\\'")
+                        val set = setEffects[setEffectIndex].cleanLang()
                         relicsLangContent.add("<string name=\"${relicType}.${code}.set\">${set}</string>")
                         relicEnumValue += "R.string.${relicType}_${code}_set"
                         setEffectIndex += 1
@@ -509,8 +514,7 @@ tasks {
                     val markup = Klaxon().parseJsonObject(StringReader(value.toString()))
                     val parsedText = markup.array<JsonObject>("content")!!.first()
                         .array<JsonObject>("content")!!.joinToString("") {
-                            val cleanValue = it.string("value")!!
-                                .replace("'", "\\'")
+                            val cleanValue = it.string("value")!!.cleanLang()
 
                             if (it.array<JsonObject>("marks")?.isNotEmpty() == false) {
                                 cleanValue
