@@ -59,6 +59,11 @@ class ScrapeTask(
 }
 
 tasks {
+    val scrapePrerequisites = register("scrapePrerequisites") {
+        group = "scraping"
+        mkdir("app/src/main/java/edu/shch/hsr/relicanalyzer/hsr/dynamic")
+    }
+
     val scrapeRelics = register("scrapeRelics") {
         group = "scraping"
         ScrapeTask(
@@ -156,6 +161,7 @@ tasks {
                 """.trimIndent() + "\n\t${ornamentsCodeContent.joinToString(",\n\t")}\n}")
             }
         ).scrape()
+        dependsOn(scrapePrerequisites)
     }
 
     val scrapeCaverns = register("scrapeCaverns") {
@@ -196,6 +202,7 @@ tasks {
                 relicsFile.writeText(relicsContent)
             }
         ).scrape()
+        dependsOn(scrapePrerequisites)
     }
 
     val scrapeWorlds = register("scrapeWorlds") {
@@ -219,6 +226,7 @@ tasks {
                 )
             }
         ).scrape()
+        dependsOn(scrapePrerequisites)
     }
 
     val scrapeCharacters = register("scrapeCharacters") {
@@ -393,6 +401,7 @@ tasks {
             append(characterLangContent)
             appendLine("</resources>")
         })
+        dependsOn(scrapePrerequisites)
     }
 
     val scrapeLightCones = register("scrapeLightCones") {
@@ -543,6 +552,7 @@ tasks {
             append(langContent)
             appendLine("</resources>")
         })
+        dependsOn(scrapePrerequisites)
     }
 
     register("scrapeResources") {
