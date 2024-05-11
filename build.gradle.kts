@@ -113,7 +113,7 @@ tasks {
                     if (!isRelic && !isOrnament) throw IllegalStateException("The 'API' appears to have changed, please check!")
                     val relicType = if (isRelic) "relic" else "ornament"
                     val enumName = label.asField()
-                    relicsLangContent.add("<string name=\"${relicType}.${code}\">${label}</string>")
+                    relicsLangContent.add("<string name=\"${relicType}.${code}\" translatable=\"false\">${label}</string>")
 
                     val listRef = if (isRelic) relicsCodeContent else ornamentsCodeContent
 
@@ -130,13 +130,13 @@ tasks {
                     if (isRelic) {
                         val halfSet = setEffects[setEffectIndex].cleanLang()
                         val fullSet = setEffects[setEffectIndex + 1].cleanLang()
-                        relicsLangContent.add("<string name=\"${relicType}.${code}.half\">${halfSet}</string>")
-                        relicsLangContent.add("<string name=\"${relicType}.${code}.full\">${fullSet}</string>")
+                        relicsLangContent.add("<string name=\"${relicType}.${code}.half\" translatable=\"false\">${halfSet}</string>")
+                        relicsLangContent.add("<string name=\"${relicType}.${code}.full\" translatable=\"false\">${fullSet}</string>")
                         relicEnumValue += "R.string.${relicType}_${code}_half, R.string.${relicType}_${code}_full"
                         setEffectIndex += 2
                     } else {
                         val set = setEffects[setEffectIndex].cleanLang()
-                        relicsLangContent.add("<string name=\"${relicType}.${code}.set\">${set}</string>")
+                        relicsLangContent.add("<string name=\"${relicType}.${code}.set\" translatable=\"false\">${set}</string>")
                         relicEnumValue += "R.string.${relicType}_${code}_set"
                         setEffectIndex += 1
                     }
@@ -349,7 +349,7 @@ tasks {
                 override fun pathMatches(path: String) = characterRegex.matches(path)
             }).parseJsonObject(StringReader(rawCharacter))
 
-            characterLangContent.appendLine("\t<string name=\"character.${charVarName}\">" +
+            characterLangContent.appendLine("\t<string name=\"character.${charVarName}\" translatable=\"false\">" +
                     "${character.replace("&", "&amp;")}</string>")
 
             characterCodeContent
@@ -472,7 +472,7 @@ tasks {
 
                     lightConeName = value.toString()
                     val varName = lightConeName!!.asField().lowercase()
-                    langContent.appendLine("\t<string name=\"light_cone.${varName}\">${
+                    langContent.appendLine("\t<string name=\"light_cone.${varName}\" translatable=\"false\">${
                         lightConeName!!.replace("'", "\\'")
                     }</string>")
                     var slug = lightConeName!!
@@ -512,7 +512,7 @@ tasks {
                     rarity = value.toString().toInt()
                 } else if (path.endsWith("skillName")) {
                     val varName = lightConeName!!.asField().lowercase()
-                    langContent.appendLine("\t<string name=\"light_cone.skill.${varName}\">${
+                    langContent.appendLine("\t<string name=\"light_cone.skill.${varName}\" translatable=\"false\">${
                         value.toString().replace("'", "\\'")
                     }</string>")
                 } else if (path.endsWith("raw")) {
@@ -532,7 +532,7 @@ tasks {
                         }.trim()
 
                     with(langContent) {
-                        appendLine("\t<string name=\"light_cone.description.${varName}\">${parsedText}</string>")
+                        appendLine("\t<string name=\"light_cone.description.${varName}\" translatable=\"false\">${parsedText}</string>")
                     }
                 } else if (path.endsWith("value_level_max")) {
                     stats = if (path.contains("hp")) {
