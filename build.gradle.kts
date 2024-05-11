@@ -39,6 +39,15 @@ fun String.asField() =
         .replace(Regex("[ -.]"), "_")
         .replace(Regex("_+"), "_")
 
+fun prepareScraping() {
+    val dir = File("app/src/main/java/edu/shch/hsr/relicanalyzer/hsr/dynamic")
+    if (!dir.exists()) {
+        if (!dir.mkdir()) {
+            throw IllegalStateException("Could not create Dynamic Resources folder!")
+        }
+    }
+}
+
 class ScrapeTask(
     private val url: URL,
     private val regexes: List<Regex>,
@@ -59,16 +68,9 @@ class ScrapeTask(
 }
 
 tasks {
-    val scrapePrerequisites = register("scrapePrerequisites") {
-        group = "scraping"
-        didWork = true
-        if (!mkdir("app/src/main/java/edu/shch/hsr/relicanalyzer/hsr/dynamic").exists()) {
-            throw IllegalStateException("Could not create Dynamic Resources folder!")
-        }
-    }
-
     val scrapeRelics = register("scrapeRelics") {
         group = "scraping"
+        prepareScraping()
         ScrapeTask(
             URL("https://www.mobilemeta.gg/honkai-starrail/database/relic"),
             listOf(
@@ -167,11 +169,11 @@ tasks {
                 """.trimIndent() + "\n\t${ornamentsCodeContent.joinToString(",\n\t")}\n}")
             }
         ).scrape()
-        dependsOn(scrapePrerequisites)
     }
 
     val scrapeCaverns = register("scrapeCaverns") {
         group = "scraping"
+        prepareScraping()
         ScrapeTask(
             URL("https://honkai-star-rail.fandom.com/wiki/Cavern_of_Corrosion"),
             listOf(
@@ -209,11 +211,11 @@ tasks {
                 relicsFile.writeText(relicsContent)
             }
         ).scrape()
-        dependsOn(scrapePrerequisites)
     }
 
     val scrapeWorlds = register("scrapeWorlds") {
         group = "scraping"
+        prepareScraping()
         ScrapeTask(
             URL("https://honkai-star-rail.fandom.com/wiki/Simulated_Universe/Worlds"),
             listOf(Regex("<div class=\"card-container\"><span class=\"card-wrapper\"><span class=\"card-body card-2?345\"><span class=\"card-image\"><span><a href=\"/wiki/[^\"]+\" title=\"([^\"]+)\">")),
@@ -234,11 +236,11 @@ tasks {
                 )
             }
         ).scrape()
-        dependsOn(scrapePrerequisites)
     }
 
     val scrapeCharacters = register("scrapeCharacters") {
         group = "scraping"
+        prepareScraping()
         val charactersUrl = URL("https://www.prydwen.gg/page-data/star-rail/characters/page-data.json")
         val rawCharacters = String(charactersUrl.readBytes())
         val characterRegex = Regex(
@@ -411,11 +413,11 @@ tasks {
             append(characterLangContent)
             appendLine("</resources>")
         })
-        dependsOn(scrapePrerequisites)
     }
 
     val scrapeLightCones = register("scrapeLightCones") {
         group = "scraping"
+        prepareScraping()
         val lightConesUrl = URL("https://www.prydwen.gg/page-data/star-rail/light-cones/page-data.json")
         val rawLightCones = String(lightConesUrl.readBytes())
         val lightConeRegex = Regex(listOf(
@@ -564,7 +566,6 @@ tasks {
             append(langContent)
             appendLine("</resources>")
         })
-        dependsOn(scrapePrerequisites)
     }
 
     register("scrapeResources") {
