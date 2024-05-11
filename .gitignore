@@ -6,6 +6,8 @@
 .gradle
 /local.properties
 /build
+/app/debug
+/app/release
 /captures
 local.properties
 .externalNativeBuild

@@ -1,0 +1,37 @@
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "This job is running on a ${{ runner.os }} server hosted by GitHub!"
+      - uses: actions/checkout@v3
+      - run: echo "The ${{ github.repository }} repository has been cloned."
+      - run: echo "Setting up JDK"
+      - name: set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          # noinspection SpellCheckingInspection
+          distribution: 'temurin'
+          cache: gradle
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - run: echo "Mining Resources."
+      - name: Mine Resources with Gradle
+        run: ./gradlew scrapeResources
+      - run: echo "Build status report=${{ job.status }}."
+      - name: Upload App Bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: resources
+          path: |
+            /app/src/main/res/drawable
+            /app/src/main/res/values
+            /app/src/main/java/edu/shch/hsr/relicanalyzer/hsr/dynamic
+          compression-level: 9
+      # https://blog.logrocket.com/android-ci-cd-using-github-actions/
+      # https://developer.android.com/studio/publish/app-signing#generate-key
