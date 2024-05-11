@@ -62,7 +62,9 @@ tasks {
     val scrapePrerequisites = register("scrapePrerequisites") {
         group = "scraping"
         didWork = true
-        mkdir("app/src/main/java/edu/shch/hsr/relicanalyzer/hsr/dynamic")
+        if (!mkdir("app/src/main/java/edu/shch/hsr/relicanalyzer/hsr/dynamic").exists()) {
+            throw IllegalStateException("Could not create Dynamic Resources folder!")
+        }
     }
 
     val scrapeRelics = register("scrapeRelics") {
@@ -84,12 +86,15 @@ tasks {
                 val relicsBaseUrl = "https://images.mobilemeta.gg/starrail/static/icon/relic"
 
                 val relicsCodeFile = File("${codeBasePath}/Relics.kt")
+                relicsCodeFile.createNewFile()
                 val relicsCodeContent = mutableListOf<String>()
 
                 val ornamentsCodeFile = File("${codeBasePath}/Ornaments.kt")
+                ornamentsCodeFile.createNewFile()
                 val ornamentsCodeContent = mutableListOf<String>()
 
                 val relicsLangFile = File("${dataBasePath}/dynamic-relics.xml")
+                relicsLangFile.createNewFile()
                 val relicsLangContent = mutableListOf<String>()
 
                 var setEffectIndex = 0
@@ -178,6 +183,7 @@ tasks {
                 val pairings = it[1]
                 // TODO: Add [names.size == pairings.size / 2]-assertion
                 val relicsFile = File("${codeBasePath}/CavernOfCorrosion.kt")
+                relicsFile.createNewFile()
                 val relicsContent = buildString {
                     appendLine(codePackage).appendLine()
                     appendLine("@Suppress(\"SpellCheckingInspection\")")
@@ -214,6 +220,7 @@ tasks {
             listOf {
                 val ornaments = it[0]
                 val worldsFile = File("${codeBasePath}/Worlds.kt")
+                worldsFile.createNewFile()
                 val worldsContent = mutableListOf<String>()
                 for (world in 0 until ornaments.size / 2) {
                     val firstSet = ornaments[2*world].asField()
@@ -253,8 +260,10 @@ tasks {
 
         val characterDatabase = mutableMapOf<String, String>()
         val characterCodeFile = File("${codeBasePath}/Characters.kt")
+        characterCodeFile.createNewFile()
         val characterCodeContent = StringBuilder()
         val characterLangFile = File("${dataBasePath}/dynamic-characters.xml")
+        characterLangFile.createNewFile()
         val characterLangContent = StringBuilder()
 
         Klaxon().pathMatcher(object: PathMatcher {
@@ -443,7 +452,9 @@ tasks {
         }
 
         val codeFile = File("${codeBasePath}/LightCones.kt")
+        codeFile.createNewFile()
         val langFile = File("${dataBasePath}/dynamic-light-cones.xml")
+        langFile.createNewFile()
         val langContent = StringBuilder()
 
         Klaxon().pathMatcher(object: PathMatcher {
