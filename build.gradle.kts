@@ -61,6 +61,7 @@ class ScrapeTask(
 tasks {
     val scrapePrerequisites = register("scrapePrerequisites") {
         group = "scraping"
+        didWork = true
         mkdir("app/src/main/java/edu/shch/hsr/relicanalyzer/hsr/dynamic")
     }
 
