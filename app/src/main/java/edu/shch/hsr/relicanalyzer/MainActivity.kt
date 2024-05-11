@@ -43,6 +43,8 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -72,6 +74,11 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+val saibaFamily = FontFamily(
+    Font(R.font.saiba, FontWeight.Normal),
+    Font(R.font.saiba_outline, FontWeight.Thin)
+)
 
 @Composable
 private fun RelicOrnamentChoice(
@@ -127,7 +134,8 @@ private fun RelicOrnamentChoice(
                     Text(
                         text = primary,
                         textAlign = TextAlign.Center,
-                        fontSize = 6.em,
+                        fontFamily = saibaFamily,
+                        fontSize = 5.6.em,
                         modifier = Modifier.padding(bottom = 20.dp)
                     )
                 }
@@ -167,6 +175,7 @@ private fun RelicOrnamentChoice(
                     Text(
                         text = secondary,
                         textAlign = TextAlign.Center,
+                        fontFamily = saibaFamily,
                         fontSize = 2.em,
                         lineHeight = 1.em,
                         modifier = Modifier.padding(bottom = 5.dp)
@@ -185,6 +194,7 @@ private fun RelicOrnamentChoice(
                 Text(
                     text = stringResource(id = R.string.character),
                     fontSize = 7.em,
+                    fontFamily = saibaFamily,
                     modifier = Modifier.padding(vertical = 10.dp)
                 )
             }
@@ -199,6 +209,7 @@ private fun RelicOrnamentChoice(
                 Text(
                     text = stringResource(id = R.string.lightcone),
                     fontSize = 7.em,
+                    fontFamily = saibaFamily,
                     modifier = Modifier.padding(vertical = 10.dp)
                 )
             }
@@ -239,7 +250,7 @@ fun RelicAnalyzer(modifier: Modifier = Modifier, dispatcher: OnBackPressedDispat
                         .padding(top = 40.dp)
                 ) {
                     Text(
-                        text = "押さないでよ！",
+                        text = stringResource(id = R.string.ui_do_not_touch),
                         fontSize = 7.em,
                         fontWeight = FontWeight.Bold,
                         color = PlainAssWhite
@@ -261,8 +272,7 @@ fun RelicAnalyzer(modifier: Modifier = Modifier, dispatcher: OnBackPressedDispat
 
     Surface(modifier = modifier, color = MaterialTheme.colorScheme.background) {
         if (isInCharacter) {
-            isInCharacter = false
-            showMaintenanceDialogue = true
+            CharacterView(dispatcher)  { isInCharacter = false }
         } else if(isInLightCones) {
             isInLightCones = false
             showMaintenanceDialogue = true

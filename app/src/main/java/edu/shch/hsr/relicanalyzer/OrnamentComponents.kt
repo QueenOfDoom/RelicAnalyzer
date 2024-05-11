@@ -67,8 +67,7 @@ fun OrnamentRowItem(ornament: Ornament, onClick: (Ornament) -> Unit) {
             text = stringResource(id = ornament.text),
             textAlign = TextAlign.Center,
             color = NormalLavender,
-            fontSize = 3.6.em,
-            fontWeight = FontWeight.W600,
+            fontFamily = saibaFamily,
             modifier = Modifier
                 .width(140.dp)
                 .padding(top = 8.dp)
@@ -129,9 +128,8 @@ fun OrnamentButton(@DrawableRes img: Int, @StringRes text: Int, onClick: () -> U
     ElevatedButton(
         onClick = { onClick() },
         border = BorderStroke(4.dp, DarkLavender),
-        modifier = Modifier.size(180.dp),
-
-        ) {
+        modifier = Modifier.size(180.dp)
+    ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -142,7 +140,10 @@ fun OrnamentButton(@DrawableRes img: Int, @StringRes text: Int, onClick: () -> U
             )
             Text(
                 text = stringResource(id = text),
+                textAlign = TextAlign.Center,
+                fontFamily = saibaFamily,
                 fontSize = 4.em,
+                //modifier = Modifier.padding(horizontal = 20.dp)
             )
         }
     }
@@ -163,6 +164,7 @@ fun OrnamentSetDetails(
             textAlign = TextAlign.Center,
             color = NormalLavender,
             fontSize = 7.em,
+            fontFamily = saibaFamily,
             fontWeight = FontWeight.Bold,
             lineHeight = 1.2.em,
             modifier = Modifier.padding(16.dp)

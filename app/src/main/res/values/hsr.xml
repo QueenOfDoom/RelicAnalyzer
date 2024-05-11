@@ -1,59 +1,65 @@
 <resources>
-	<string name="character">Character</string>
-	<string name="lightcone">Light Cone</string>
+	<string name="character" translatable="false">Character</string>
+	<string name="lightcone" translatable="false">Light Cone</string>
 	<string name="relic">Relic</string>
-	<string name="ornament">Planar Ornament</string>
+	<string name="ornament" translatable="false">Planar Ornament</string>
 
-	<string name="relic.head">Head</string>
-	<string name="relic.hands">Hands</string>
-	<string name="relic.body">Body</string>
-	<string name="relic.feet">Feet</string>
+	<string name="relic.head" translatable="false">Head</string>
+	<string name="relic.hands" translatable="false">Hands</string>
+	<string name="relic.body" translatable="false">Body</string>
+	<string name="relic.feet" translatable="false">Feet</string>
 
-	<string name="ornament.sphere">Planar Sphere</string>
-	<string name="ornament.rope">Link Rope</string>
+	<string name="ornament.sphere" translatable="false">Planar Sphere</string>
+	<string name="ornament.rope" translatable="false">Link Rope</string>
 
-	<string name="stat.hp">HP</string>
-	<string name="stat.atk">ATK</string>
-	<string name="stat.def">DEF</string>
-	<string name="stat.hp_percent">HP%</string>
-	<string name="stat.atk_percent">ATK%</string>
-	<string name="stat.def_percent">DEF%</string>
-	<string name="stat.crit_rate">CRIT Rate</string>
-	<string name="stat.crit_dmg">CRIT DMG</string>
-	<string name="stat.outgoing_healing">Outgoing Healing</string>
-	<string name="stat.effect_hit_rate">Effect Hit Rate</string>
-	<string name="stat.effect_res">Effect RES</string>
-	<string name="stat.break_effect">Break Effect</string>
-	<string name="stat.energy_regen_rate">Energy Regen Rate</string>
-	<string name="stat.speed">Speed</string>
+	<string name="stat.hp" translatable="false">HP</string>
+	<string name="stat.atk" translatable="false">ATK</string>
+	<string name="stat.def" translatable="false">DEF</string>
+	<string name="stat.hp_percent" translatable="false">HP%</string>
+	<string name="stat.atk_percent" translatable="false">ATK%</string>
+	<string name="stat.def_percent" translatable="false">DEF%</string>
+	<string name="stat.crit_rate" translatable="false">CRIT Rate</string>
+	<string name="stat.crit_dmg" translatable="false">CRIT DMG</string>
+	<string name="stat.outgoing_healing" translatable="false">Outgoing Healing</string>
+	<string name="stat.effect_hit_rate" translatable="false">Effect Hit Rate</string>
+	<string name="stat.effect_res" translatable="false">Effect RES</string>
+	<string name="stat.break_effect" translatable="false">Break Effect</string>
+	<string name="stat.energy_regen_rate" translatable="false">Energy Regen Rate</string>
+	<string name="stat.speed" translatable="false">Speed</string>
 
-	<string name="stat.dmg.elemental">Elemental DMG</string>
-	<string name="stat.dmg.physical">Physical DMG</string>
-	<string name="stat.dmg.fire">Fire DMG</string>
-	<string name="stat.dmg.ice">Ice DMG</string>
-	<string name="stat.dmg.lightning">Lightning DMG</string>
-	<string name="stat.dmg.wind">Wind DMG</string>
-	<string name="stat.dmg.quantum">Quantum DMG</string>
-	<string name="stat.dmg.imaginary">Imaginary DMG</string>
+	<string name="stat.dmg.elemental" translatable="false">Elemental DMG</string>
+	<string name="stat.dmg.physical" translatable="false">Physical DMG</string>
+	<string name="stat.dmg.fire" translatable="false">Fire DMG</string>
+	<string name="stat.dmg.ice" translatable="false">Ice DMG</string>
+	<string name="stat.dmg.lightning" translatable="false">Lightning DMG</string>
+	<string name="stat.dmg.wind" translatable="false">Wind DMG</string>
+	<string name="stat.dmg.quantum" translatable="false">Quantum DMG</string>
+	<string name="stat.dmg.imaginary" translatable="false">Imaginary DMG</string>
 
-	<string name="element.physical">Physical</string>
-	<string name="element.fire">Fire</string>
-	<string name="element.ice">Ice</string>
-	<string name="element.lightning">Lightning</string>
-	<string name="element.wind">Wind</string>
-	<string name="element.quantum">Quantum</string>
-	<string name="element.imaginary">Imaginary</string>
+	<string name="element.physical" translatable="false">Physical</string>
+	<string name="element.fire" translatable="false">Fire</string>
+	<string name="element.ice" translatable="false">Ice</string>
+	<string name="element.lightning" translatable="false">Lightning</string>
+	<string name="element.wind" translatable="false">Wind</string>
+	<string name="element.quantum" translatable="false">Quantum</string>
+	<string name="element.imaginary" translatable="false">Imaginary</string>
 
-	<string name="path.destruction">Destruction</string>
-	<string name="path.hunt">Hunt</string>
-	<string name="path.erudition">Erudition</string>
-	<string name="path.harmony">Harmony</string>
-	<string name="path.nihility">Nihility</string>
-	<string name="path.preservation">Preservation</string>
-	<string name="path.abundance">Abundance</string>
+	<string name="path.destruction" translatable="false">Destruction</string>
+	<string name="path.hunt" translatable="false">Hunt</string>
+	<string name="path.erudition" translatable="false">Erudition</string>
+	<string name="path.harmony" translatable="false">Harmony</string>
+	<string name="path.nihility" translatable="false">Nihility</string>
+	<string name="path.preservation" translatable="false">Preservation</string>
+	<string name="path.abundance" translatable="false">Abundance</string>
 
 	<!-- UI Elements -->
-	<string name="ui.set.info">Set Info</string>
-	<string name="ui.set.half">2-Piece Set</string>
-	<string name="ui.set.full">4-Piece Set</string>
+	<string name="ui.set.info" translatable="false">Set Info</string>
+	<string name="ui.set.half" translatable="false">2-Piece Set</string>
+	<string name="ui.set.full" translatable="false">4-Piece Set</string>
+
+	<string name="ui.view.general" translatable="false">General</string>
+	<string name="ui.view.detail" translatable="false">Detail</string>
+
+	<!-- Funny Shit -->
+	<string name="ui.do_not_touch">Do not touch!</string>
 </resources>

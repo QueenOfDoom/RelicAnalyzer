@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">RelicAnalyzer</string>
+
+    <string name="ui.do_not_touch">押さないでよ！</string>
+    <string name="relic">遺物</string>
+</resources>

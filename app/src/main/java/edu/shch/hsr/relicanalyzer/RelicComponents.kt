@@ -88,7 +88,7 @@ fun RelicRowItem(relic: Relic, onClick: (Relic) -> Unit) {
             textAlign = TextAlign.Center,
             color = NormalLavender,
             fontSize = 3.6.em,
-            fontWeight = FontWeight.W600,
+            fontFamily = saibaFamily,
             modifier = Modifier
                 .width(140.dp)
                 .padding(top = 8.dp)
@@ -161,6 +161,7 @@ fun RelicButton(@DrawableRes img: Int, @StringRes text: Int, onClick: () -> Unit
             )
             Text(
                 text = stringResource(id = text),
+                fontFamily = saibaFamily,
                 fontSize = 4.em,
             )
         }
@@ -214,6 +215,7 @@ fun RelicSetDetailDialog(relic: Relic, onDismissRequest: () -> Unit) {
                     Text(
                         text = stringResource(id = R.string.ui_set_half),
                         fontSize = 4.3.em,
+                        fontFamily = saibaFamily,
                         textAlign = TextAlign.Center
                     )
                     Text(
@@ -229,6 +231,7 @@ fun RelicSetDetailDialog(relic: Relic, onDismissRequest: () -> Unit) {
                     Text(
                         text = stringResource(id = R.string.ui_set_full),
                         fontSize = 4.3.em,
+                        fontFamily = saibaFamily,
                         textAlign = TextAlign.Center,
                     )
                     Text(
@@ -268,6 +271,7 @@ fun RelicSetDetails(
             textAlign = TextAlign.Center,
             color = NormalLavender,
             fontSize = 7.em,
+            fontFamily = saibaFamily,
             fontWeight = FontWeight.Bold,
             lineHeight = 1.2.em,
             modifier = Modifier.padding(16.dp)
@@ -309,6 +313,7 @@ fun RelicSetDetails(
                 ) {
                     Text(
                         text = stringResource(id = R.string.ui_set_info),
+                        fontFamily = saibaFamily,
                         fontSize = 4.em
                     )
                 }
