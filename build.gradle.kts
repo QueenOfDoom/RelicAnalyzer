@@ -42,7 +42,7 @@ fun String.asField() =
 fun String.cleanLang() =
     this.replace("'", "\\'")
         .replace("&#x27;", "\\'")
-        .replace("%", "%%")
+        .replace("%", "\\%")
 
 fun prepareScraping() {
     val dir = File("app/src/main/java/edu/shch/hsr/relicanalyzer/hsr/dynamic")

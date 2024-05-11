@@ -292,8 +292,22 @@ fun RelicSetDetails(
         }
         HorizontalDivider(thickness = 2.dp, color = WiltingLavender)
         val spacing = 32.dp
+        ElevatedButton(
+            onClick = { openSetInfo.value = true },
+            border = BorderStroke(2.dp, DarkLavender),
+            modifier = Modifier
+                .align(Alignment.End)
+                .height(40.dp)
+                .offset(x = (-30).dp, y = 60.dp)
+        ) {
+            Text(
+                text = stringResource(id = R.string.ui_set_info),
+                fontFamily = saibaFamily,
+                fontSize = 4.em
+            )
+        }
         Row(
-            modifier = Modifier.padding(top = spacing)
+            modifier = Modifier.padding(top = spacing - 32.dp)
         ) {
             Column {
                 RelicButton(img = relic.head, text = R.string.relic_head) { onClick(RelicSlot.Head) }
@@ -301,22 +315,8 @@ fun RelicSetDetails(
                 RelicButton(img = relic.body, text = R.string.relic_body) { onClick(RelicSlot.Body) }
             }
             Column(
-                modifier = Modifier.offset(y = 90.dp - 40.dp + spacing / 2)
+                modifier = Modifier.offset(y = 90.dp + spacing / 2)
             ) {
-                ElevatedButton(
-                    onClick = { openSetInfo.value = true },
-                    border = BorderStroke(2.dp, DarkLavender),
-                    modifier = Modifier
-                        .align(Alignment.End)
-                        .height(40.dp)
-                        .offset(x = (-10).dp, y = (-60).dp)
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.ui_set_info),
-                        fontFamily = saibaFamily,
-                        fontSize = 4.em
-                    )
-                }
                 RelicButton(img = relic.hands, text = R.string.relic_hands) { onClick(RelicSlot.Hands) }
                 Spacer(modifier = Modifier.height(spacing))
                 RelicButton(img = relic.feet, text = R.string.relic_feet) { onClick(RelicSlot.Feet) }
