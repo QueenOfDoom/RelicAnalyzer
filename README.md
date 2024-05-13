@@ -32,6 +32,22 @@ That includes:
 ## Fonts
 - [Saiba Font](https://github.com/YuurinBee/SAIBA-45)
 
+## Color Variables
+This section describes the color palette, the corresponding
+Material UI identifiers and the implications of a change
+in any particular color.
+
+By default all 6-digit hex colors assume a transparency of 0xFF.
+
+| Material Color Identifier | Implications                                                              | Personal Identifier | Color Code |
+|---------------------------|---------------------------------------------------------------------------|---------------------|------------|
+| primary                   | primary font color & background-aspect color for all prefab UI components | Purple80            | 0xD0BCFF   |
+|                           |                                                                           |                     |            |
+|                           |                                                                           |                     |            |
+|                           |                                                                           |                     |            |
+|                           |                                                                           |                     |            |
+
+
 ## Credits
 Graphics: **猫**
 Dev: Yours Truly

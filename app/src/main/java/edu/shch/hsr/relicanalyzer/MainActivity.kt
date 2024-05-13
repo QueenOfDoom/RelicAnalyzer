@@ -1,5 +1,6 @@
 package edu.shch.hsr.relicanalyzer
 
+import android.content.Context
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -23,11 +24,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -56,11 +59,8 @@ import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
 import coil.size.Size
 import edu.shch.hsr.relicanalyzer.hsr.RelicType
-import edu.shch.hsr.relicanalyzer.ui.theme.DarkLavender
-import edu.shch.hsr.relicanalyzer.ui.theme.OverlayLavender
-import edu.shch.hsr.relicanalyzer.ui.theme.PlainAssWhite
+import edu.shch.hsr.relicanalyzer.ui.component.TextMenuButton
 import edu.shch.hsr.relicanalyzer.ui.theme.RelicAnalyzerTheme
-import edu.shch.hsr.relicanalyzer.ui.theme.WiltingLavender
 import kotlin.math.max
 
 class MainActivity : ComponentActivity() {
@@ -68,7 +68,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            RelicAnalyzerTheme {
+            RelicAnalyzerTheme(dynamicColor = false) {
                 RelicAnalyzer(modifier = Modifier.fillMaxSize(), onBackPressedDispatcher)
             }
         }
@@ -112,12 +112,14 @@ private fun RelicOrnamentChoice(
             val secondary = (if (isRelic.value) ornamentNameList else relicNameList)
                 .joinToString("\n")
 
-            ElevatedButton(
-                onClick = { onRelicType(if (isRelic.value) RelicType.Relic else RelicType.PlanarOrnament) },
-                border = BorderStroke(
-                    4.dp, DarkLavender
-                ),
-                modifier = Modifier.size(196.dp, 294.dp)
+            OutlinedButton(
+                onClick = {
+                    onRelicType(if (isRelic.value)
+                        RelicType.Relic
+                    else RelicType.PlanarOrnament)
+                },
+                modifier = Modifier.size(196.dp, 294.dp),
+                border = ButtonDefaults.outlinedButtonBorder.copy(width = 4.dp)
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -151,13 +153,11 @@ private fun RelicOrnamentChoice(
                     contentDescription = "Description"
                 )
             }
-            ElevatedButton(
+            OutlinedButton(
                 onClick = { },
                 enabled = false,
                 modifier = Modifier.size(100.dp, 150.dp),
-                border = BorderStroke(
-                    4.dp, DarkLavender
-                ),
+                border = ButtonDefaults.outlinedButtonBorder.copy(width = 4.dp),
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -184,40 +184,21 @@ private fun RelicOrnamentChoice(
             }
         }
         Column {
-            ElevatedButton(
-                onClick = { onCharacter() },
-                border = BorderStroke(
-                    4.dp, DarkLavender
-                ),
-                modifier = Modifier.fillMaxWidth(fraction = 0.8f)
-            ) {
-                Text(
-                    text = stringResource(id = R.string.character),
-                    fontSize = 7.em,
-                    fontFamily = saibaFamily,
-                    modifier = Modifier.padding(vertical = 10.dp)
-                )
-            }
+            TextMenuButton(
+                text = R.string.character,
+                onClick = onCharacter,
+                modifier = Modifier.fillMaxWidth(0.8f)
+            )
             Spacer(modifier = Modifier.height(30.dp))
-            ElevatedButton(
-                onClick = { onLightCone() },
-                border = BorderStroke(
-                    4.dp, DarkLavender
-                ),
-                modifier = Modifier.fillMaxWidth(fraction = 0.8f)
-            ) {
-                Text(
-                    text = stringResource(id = R.string.lightcone),
-                    fontSize = 7.em,
-                    fontFamily = saibaFamily,
-                    modifier = Modifier.padding(vertical = 10.dp)
-                )
-            }
+            TextMenuButton(
+                text = R.string.lightcone,
+                onClick = onLightCone,
+                modifier = Modifier.fillMaxWidth(0.8f)
+            )
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RelicAnalyzer(modifier: Modifier = Modifier, dispatcher: OnBackPressedDispatcher) {
     var relicType: RelicType? by rememberSaveable { mutableStateOf(null) }
@@ -236,38 +217,9 @@ fun RelicAnalyzer(modifier: Modifier = Modifier, dispatcher: OnBackPressedDispat
         }.build()
 
     if (showMaintenanceDialogue) {
-        BasicAlertDialog(
-            onDismissRequest = { showMaintenanceDialogue = false },
-            content = {
-                Column (
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.SpaceEvenly,
-                    modifier = Modifier
-                        .fillMaxWidth(0.8f)
-                        .fillMaxHeight(0.5f)
-                        .background(OverlayLavender, RoundedCornerShape(64.dp))
-                        .border(4.dp, WiltingLavender, shape = RoundedCornerShape(64.dp))
-                        .padding(top = 40.dp)
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.ui_do_not_touch),
-                        fontSize = 7.em,
-                        fontWeight = FontWeight.Bold,
-                        color = PlainAssWhite
-                    )
-                    Image(
-                        painter = rememberAsyncImagePainter(
-                            ImageRequest.Builder(context).data(data = R.drawable.herta_kuru)
-                                .apply(block = {
-                                    size(Size.ORIGINAL)
-                                }).build(),
-                            imageLoader = imageLoader
-                        ),
-                        contentDescription = null,
-                        modifier = modifier.fillMaxWidth(),
-                    )
-                }
-            })
+        MaintenanceDialogue(context, imageLoader, modifier) {
+            showMaintenanceDialogue = false
+        }
     }
 
     Surface(modifier = modifier, color = MaterialTheme.colorScheme.background) {
@@ -300,4 +252,53 @@ fun RelicAnalyzer(modifier: Modifier = Modifier, dispatcher: OnBackPressedDispat
             }
         }
     }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun MaintenanceDialogue(
+    context: Context,
+    imageLoader: ImageLoader,
+    modifier: Modifier,
+    dismissDialogue: () -> Unit
+) {
+    BasicAlertDialog(
+        onDismissRequest = dismissDialogue,
+        content = {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .fillMaxHeight(0.5f)
+                    .background(
+                        MaterialTheme.colorScheme.secondaryContainer,
+                        RoundedCornerShape(64.dp)
+                    )
+                    .border(
+                        4.dp,
+                        MaterialTheme.colorScheme.outline,
+                        shape = RoundedCornerShape(64.dp)
+                    )
+                    .padding(top = 40.dp)
+            ) {
+                Text(
+                    text = stringResource(id = R.string.ui_do_not_touch),
+                    fontSize = 7.em,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                )
+                Image(
+                    painter = rememberAsyncImagePainter(
+                        ImageRequest.Builder(context).data(data = R.drawable.herta_kuru)
+                            .apply(block = {
+                                size(Size.ORIGINAL)
+                            }).build(),
+                        imageLoader = imageLoader
+                    ),
+                    contentDescription = null,
+                    modifier = modifier.fillMaxWidth(),
+                )
+            }
+        })
 }
