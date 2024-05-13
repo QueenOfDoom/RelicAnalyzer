@@ -20,11 +20,13 @@ import edu.shch.hsr.relicanalyzer.R
 import edu.shch.hsr.relicanalyzer.ui.component.IconImageButton
 import edu.shch.hsr.relicanalyzer.ui.component.TextMenuButton
 import edu.shch.hsr.relicanalyzer.ui.component.TextualImageButton
+import edu.shch.hsr.relicanalyzer.util.LocaleRouteItem
+import edu.shch.hsr.relicanalyzer.util.RouteItem
 import edu.shch.hsr.relicanalyzer.util.reverseOn
 
 @Composable
 fun ChooseRelicOrnament(
-    route: (Any) -> Unit,
+    route: (RouteItem) -> Unit,
 ) {
     val isRelic: MutableState<Boolean> = remember { mutableStateOf(true) }
 
@@ -40,7 +42,7 @@ fun ChooseRelicOrnament(
             image = image.first,
             text = text.first,
             fontSize = 5.6.em,
-            onClick = { route(text.first) },
+            onClick = { route(LocaleRouteItem(text.first)) },
             modifier = Modifier.size(196.dp, 294.dp),
             imageModifier = Modifier
                 .padding(vertical = 5.dp)
@@ -57,7 +59,7 @@ fun ChooseRelicOrnament(
             image = image.second,
             text = text.second,
             fontSize = 2.em,
-            onClick = { route(text.second) },
+            onClick = { route(LocaleRouteItem(text.second)) },
             enabled = false,
             modifier = Modifier.size(105.dp, 130.dp),
             imageModifier = Modifier
@@ -70,7 +72,7 @@ fun ChooseRelicOrnament(
 
 @Composable
 fun ChooseSubject(
-    route: (Any) -> Unit,
+    route: (RouteItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -85,12 +87,12 @@ fun ChooseSubject(
         ) {
             TextMenuButton(
                 text = R.string.character,
-                onClick = { route(R.string.character) },
+                onClick = { route(LocaleRouteItem(R.string.character)) },
                 modifier = Modifier.fillMaxWidth()
             )
             TextMenuButton(
                 text = R.string.lightcone,
-                onClick = { route(R.string.lightcone) },
+                onClick = { route(LocaleRouteItem(R.string.lightcone)) },
                 modifier = Modifier.fillMaxWidth()
             )
         }
