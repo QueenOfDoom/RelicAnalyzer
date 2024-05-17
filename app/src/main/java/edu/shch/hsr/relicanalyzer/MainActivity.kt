@@ -14,7 +14,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import edu.shch.hsr.relicanalyzer.ui.theme.RelicAnalyzerTheme
-import edu.shch.hsr.relicanalyzer.ui.view.ChooseSubject
 import edu.shch.hsr.relicanalyzer.util.RouteItem
 import edu.shch.hsr.relicanalyzer.util.Router
 
@@ -44,13 +43,6 @@ fun RelicAnalyzer(
     dispatcher.addCallback { path.removeLast() }
 
     Surface(modifier = modifier, color = MaterialTheme.colorScheme.background) {
-        if (path.size == 0) {
-            ChooseSubject(
-                { path.add(it) },
-                modifier = modifier
-            )
-        } else {
-            Router(path, { path.add(it) })
-        }
+        Router(path) { path.add(it) }
     }
 }

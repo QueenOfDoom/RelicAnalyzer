@@ -13,6 +13,7 @@ import edu.shch.hsr.relicanalyzer.hsr.dynamic.Character
 import edu.shch.hsr.relicanalyzer.hsr.dynamic.LightCone
 import edu.shch.hsr.relicanalyzer.hsr.dynamic.Ornament
 import edu.shch.hsr.relicanalyzer.hsr.dynamic.Relic
+import edu.shch.hsr.relicanalyzer.ui.view.ChooseSubject
 import edu.shch.hsr.relicanalyzer.ui.view.detail.OrnamentSetDetailView
 import edu.shch.hsr.relicanalyzer.ui.view.detail.RelicSetDetailView
 import edu.shch.hsr.relicanalyzer.ui.view.list.CharacterListView
@@ -22,8 +23,12 @@ import edu.shch.hsr.relicanalyzer.ui.view.list.RelicListView
 
 @Composable
 fun Router(route: List<RouteItem>, move: (RouteItem) -> Unit) {
-    val last = route.last()
+    if (route.isEmpty()) {
+        ChooseSubject(move, modifier = Modifier.fillMaxSize())
+        return
+    }
 
+    val last = route.last()
     if (last is EnumRouteItem<*>) {
         when (last.value) {
             is Character -> {
