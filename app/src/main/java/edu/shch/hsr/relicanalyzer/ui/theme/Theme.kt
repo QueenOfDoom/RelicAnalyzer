@@ -14,22 +14,33 @@ private val DarkColorScheme = darkColorScheme(
     background = ShadowyLavender,
     onBackground = PlainAssWhite,
 
-    primary = NormalLavender,
+    primary = PaleLavender,
+    secondary = BrightLavender,
+    tertiary = NormalLavender,
 
-    outline = WiltingLavender
+    surface = DimLavender,
+    onSurface = PaleLavender,
+    surfaceDim = DarkLavender,
+    surfaceContainerLow = DimLavender,
+
+    outline = WiltingLavender,
+    outlineVariant = WiltingLavender
 )
 
 private val LightColorScheme = lightColorScheme(
+    background = SoftLilac,
+    onBackground = AlmostBlack,
 
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    primary = DeepLilac,
+    secondary = LightLilac,
+    tertiary = FaintLilac,
+
+    surface = LightSurfaceLilac,
+    surfaceDim = LightSurfaceLilac,
+    surfaceContainerLow = LightSurfaceLilac,
+
+    outline = SubtleLilac,
+    outlineVariant = SubtleLilac
 )
 
 @Composable

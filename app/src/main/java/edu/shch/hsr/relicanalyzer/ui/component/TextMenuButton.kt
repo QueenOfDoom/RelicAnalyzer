@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import edu.shch.hsr.relicanalyzer.ui.theme.SaibaFamily
@@ -16,7 +17,9 @@ import edu.shch.hsr.relicanalyzer.ui.theme.SaibaFamily
 fun TextMenuButton(
     @StringRes text: Int,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    textModifier: Modifier = Modifier.padding(vertical = 10.dp),
+    fontSize: TextUnit = 7.em
 ) {
     Button(
         onClick = onClick,
@@ -26,9 +29,9 @@ fun TextMenuButton(
     ) {
         Text(
             text = stringResource(id = text),
-            fontSize = 7.em,
+            fontSize = fontSize,
             fontFamily = SaibaFamily,
-            modifier = Modifier.padding(vertical = 10.dp)
+            modifier = textModifier
         )
     }
 }
