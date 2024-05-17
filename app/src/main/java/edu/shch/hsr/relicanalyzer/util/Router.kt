@@ -1,8 +1,11 @@
 package edu.shch.hsr.relicanalyzer.util
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import edu.shch.hsr.relicanalyzer.R
 import edu.shch.hsr.relicanalyzer.hsr.OrnamentSlot
 import edu.shch.hsr.relicanalyzer.hsr.RelicSlot
@@ -10,13 +13,15 @@ import edu.shch.hsr.relicanalyzer.hsr.dynamic.Character
 import edu.shch.hsr.relicanalyzer.hsr.dynamic.LightCone
 import edu.shch.hsr.relicanalyzer.hsr.dynamic.Ornament
 import edu.shch.hsr.relicanalyzer.hsr.dynamic.Relic
-import edu.shch.hsr.relicanalyzer.ui.view.CharacterEntryView
-import edu.shch.hsr.relicanalyzer.ui.view.LightConeEntryView
-import edu.shch.hsr.relicanalyzer.ui.view.OrnamentEntryView
-import edu.shch.hsr.relicanalyzer.ui.view.RelicEntryView
+import edu.shch.hsr.relicanalyzer.ui.view.detail.OrnamentSetDetailView
+import edu.shch.hsr.relicanalyzer.ui.view.detail.RelicSetDetailView
+import edu.shch.hsr.relicanalyzer.ui.view.list.CharacterListView
+import edu.shch.hsr.relicanalyzer.ui.view.list.LightConeListView
+import edu.shch.hsr.relicanalyzer.ui.view.list.OrnamentListView
+import edu.shch.hsr.relicanalyzer.ui.view.list.RelicListView
 
 @Composable
-fun Router(route: List<RouteItem>) {
+fun Router(route: List<RouteItem>, move: (RouteItem) -> Unit) {
     val last = route.last()
 
     if (last is EnumRouteItem<*>) {
@@ -28,10 +33,10 @@ fun Router(route: List<RouteItem>) {
 
             }
             is Relic -> {
-
+                RelicSetDetailView(relic = last.value)
             }
             is Ornament -> {
-
+                OrnamentSetDetailView(ornament = last.value)
             }
             is RelicSlot -> {
                 if (route.size == 1) throw IllegalStateException("Cannot possibly be in 'Specific Relic' view.")
@@ -43,11 +48,17 @@ fun Router(route: List<RouteItem>) {
             }
         }
     } else if (last is LocaleRouteItem) {
+        val characterModifier = Modifier
+            .fillMaxWidth()
+        val equipmentModifier = Modifier
+            .fillMaxSize()
+            .padding(top = 64.dp)
+
         when (last.id) {
-            R.string.relic -> { RelicEntryView() }
-            R.string.ornament -> OrnamentEntryView()
-            R.string.character -> CharacterEntryView(modifier = Modifier.fillMaxWidth())
-            R.string.lightcone -> LightConeEntryView()
+            R.string.relic -> { RelicListView(move, equipmentModifier) }
+            R.string.ornament -> OrnamentListView(move, equipmentModifier)
+            R.string.character -> CharacterListView(characterModifier)
+            R.string.lightcone -> LightConeListView()
             else -> throw IllegalStateException("Came across illegal state transition.")
         }
     }

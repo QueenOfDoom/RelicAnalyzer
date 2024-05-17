@@ -50,7 +50,7 @@ fun RelicAnalyzer(
                 modifier = modifier
             )
         } else {
-            Router(path)
+            Router(path, { path.add(it) })
         }
     }
 }

@@ -22,13 +22,12 @@ fun <T, Y> LabeledImageButtonPairList(
     rowExtractor: (T) -> Array<Y>,
     imageExtractor: (Y) -> Int,
     textExtractor: (Y) -> Int,
-    onClick: (Y) -> Unit
+    onClick: (Y) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 64.dp)
+        modifier = modifier
     ) {
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,

@@ -1,4 +1,4 @@
-package edu.shch.hsr.relicanalyzer.ui.view
+package edu.shch.hsr.relicanalyzer.ui.view.list
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -171,7 +171,7 @@ fun SearchBox(
 }
 
 @Composable
-fun CharacterEntryView(
+fun CharacterListView(
     modifier: Modifier = Modifier
 ) {
     var isGeneral: Boolean by rememberSaveable { mutableStateOf(true) }
