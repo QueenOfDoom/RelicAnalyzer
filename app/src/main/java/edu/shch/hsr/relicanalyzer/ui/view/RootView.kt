@@ -33,7 +33,7 @@ fun ChooseRelicOrnament(
     val (image, text) = arrayOf(
         (R.drawable.relic_117_0 to R.drawable.ornament_311_0),
         (R.string.relic to R.string.ornament)
-    ).map { it.reverseOn(isRelic.value) }.toTypedArray()
+    ).map { it.reverseOn(!isRelic.value) }.toTypedArray()
 
     Row(
         verticalAlignment = Alignment.Bottom,
