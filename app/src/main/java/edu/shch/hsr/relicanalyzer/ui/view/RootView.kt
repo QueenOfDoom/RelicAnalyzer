@@ -88,12 +88,12 @@ fun ChooseSubject(
         ) {
             TextMenuButton(
                 text = R.string.character,
-                onClick = { route(LocaleRouteItem(R.string.character)) },
+                onClick = { route(LocaleRouteItem.Character) },
                 modifier = Modifier.fillMaxWidth()
             )
             TextMenuButton(
                 text = R.string.lightcone,
-                onClick = { route(LocaleRouteItem(R.string.lightcone)) },
+                onClick = { route(LocaleRouteItem.LightCone) },
                 modifier = Modifier.fillMaxWidth()
             )
         }

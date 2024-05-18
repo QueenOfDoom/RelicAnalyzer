@@ -28,11 +28,13 @@ import edu.shch.hsr.relicanalyzer.ui.component.hsr.EquipmentSetInfoDialogue
 import edu.shch.hsr.relicanalyzer.ui.component.hsr.EquipmentUser
 import edu.shch.hsr.relicanalyzer.ui.component.hsr.EquipmentZigZagView
 import edu.shch.hsr.relicanalyzer.ui.theme.SaibaFamily
+import edu.shch.hsr.relicanalyzer.util.LocaleRouteItem
+import edu.shch.hsr.relicanalyzer.util.RouteItem
 import edu.shch.hsr.relicanalyzer.util.asDrawableRes
 
 
 @Composable
-fun RelicSetDetailView(relic: Relic, modifier: Modifier = Modifier) {
+fun RelicSetDetailView(relic: Relic, forward: (RouteItem) -> Unit, modifier: Modifier = Modifier) {
     val openSetInfo = remember { mutableStateOf(false) }
     if (openSetInfo.value) EquipmentSetInfoDialogue(equipment = relic)
         { openSetInfo.value = false }
@@ -64,7 +66,9 @@ fun RelicSetDetailView(relic: Relic, modifier: Modifier = Modifier) {
                 }
             }
             items(users) {
-                EquipmentUser(character = it)
+                EquipmentUser(character = it) {
+                    forward(LocaleRouteItem.DoNotTouch)
+                }
             }
         }
         HorizontalDivider(
@@ -87,6 +91,7 @@ fun RelicSetDetailView(relic: Relic, modifier: Modifier = Modifier) {
                 .map { it.asDrawableRes() }.toTypedArray(),
             texts = RelicSlot.entries.toTypedArray(),
             spacing = 60.dp,
+            onClick = { forward(LocaleRouteItem.DoNotTouch) },
             modifier = Modifier.fillMaxWidth(),
             buttonModifier = Modifier.size(180.dp)
         )

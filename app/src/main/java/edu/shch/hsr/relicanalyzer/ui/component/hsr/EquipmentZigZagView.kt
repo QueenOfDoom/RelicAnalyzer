@@ -21,6 +21,7 @@ fun EquipmentZigZagView(
     images: Array<DrawableResource>,
     texts: Array<GenericRelicSlot>,
     spacing: Dp,
+    onClick: (GenericRelicSlot) -> Unit,
     modifier: Modifier = Modifier,
     buttonModifier: Modifier = Modifier
 ) {
@@ -38,7 +39,7 @@ fun EquipmentZigZagView(
                     image = images[i].id,
                     text = texts[i].text,
                     fontSize = 4.em,
-                    onClick = { /*TODO*/ },
+                    onClick = { onClick(texts[i]) },
                     modifier = buttonModifier
                 )
                 if (i != half - 1) {
@@ -54,7 +55,7 @@ fun EquipmentZigZagView(
                     image = images[i].id,
                     text = texts[i].text,
                     fontSize = 4.em,
-                    onClick = { /*TODO*/ },
+                    onClick = { onClick(texts[i]) },
                     modifier = buttonModifier
                 )
                 if (i != images.size - 1) {

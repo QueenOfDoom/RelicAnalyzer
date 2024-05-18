@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,6 +19,8 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -52,7 +55,8 @@ import edu.shch.hsr.relicanalyzer.util.RouteItem
 fun CharacterItem(
     modifier: Modifier = Modifier,
     clipShape: Shape = RoundedCornerShape(16.dp),
-    character: Character = Character.FU_XUAN
+    character: Character = Character.FU_XUAN,
+    onClick: () -> Unit = {}
 ) {
     var characterName = stringResource(id = character.charName)
         .replace(Regex("\\s*•\\s*"), "\n")
@@ -63,56 +67,67 @@ fun CharacterItem(
         characterName = "Dang Heng IL"
     }
 
-    Box(modifier = modifier
-        .clip(clipShape)
-        .height(160.dp)
-        .border(
-            width = 2.dp,
-            color = MaterialTheme.colorScheme.surfaceDim,
-            shape = clipShape
-        )
+    Button(
+        shape = clipShape,
+        contentPadding = PaddingValues(0.dp),
+        colors = ButtonDefaults.buttonColors().copy(
+            containerColor = Color.Transparent,
+            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+        ),
+        onClick = onClick
     ) {
-        Image(
-            painter = painterResource(id = character.icon),
-            contentDescription = stringResource(id = character.charName),
-            modifier.fillMaxSize()
-        )
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween,
+        Box(
             modifier = modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
+                .clip(clipShape)
+                .height(160.dp)
+                .border(
+                    width = 2.dp,
+                    color = MaterialTheme.colorScheme.surfaceDim,
+                    shape = clipShape
+                )
         ) {
-            Box(
-                modifier = Modifier
-                    .height(48.dp)
+            Image(
+                painter = painterResource(id = character.icon),
+                contentDescription = stringResource(id = character.charName),
+                modifier.fillMaxSize()
+            )
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceBetween,
+                modifier = modifier
+                    .align(Alignment.BottomCenter)
                     .fillMaxWidth()
             ) {
-                Text(
-                    text = characterName,
-                    textAlign = TextAlign.Center,
+                Box(
                     modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                )
-            }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .padding(start = 4.dp, end = 4.dp, bottom = 4.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = character.path.image),
-                    contentDescription = stringResource(id = character.path.text),
-                    modifier = Modifier.size(16.dp),
-                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    text = stringResource(id = character.path.text),
-                    fontSize = 3.em
-                )
+                        .height(48.dp)
+                        .fillMaxWidth()
+                ) {
+                    Text(
+                        text = characterName,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                    )
+                }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .padding(start = 4.dp, end = 4.dp, bottom = 4.dp)
+                ) {
+                    Image(
+                        painter = painterResource(id = character.path.image),
+                        contentDescription = stringResource(id = character.path.text),
+                        modifier = Modifier.size(16.dp),
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = stringResource(id = character.path.text),
+                        fontSize = 3.em
+                    )
+                }
             }
         }
     }
@@ -154,7 +169,7 @@ fun CharacterListView(
         SearchBox(
             search = search,
             changeSearch = { search = it },
-            openFilter = { forward(LocaleRouteItem(R.string.ui_do_not_touch)) },
+            openFilter = { forward(LocaleRouteItem.DoNotTouch) },
             modifier = Modifier
                 .padding(
                     top = 4.dp, bottom = 16.dp,
@@ -171,21 +186,26 @@ fun CharacterListView(
         )
         LazyVerticalGrid(
             columns = GridCells.Adaptive(minSize = 96.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.CenterHorizontally),
+            horizontalArrangement = Arrangement.spacedBy(
+                8.dp,
+                alignment = Alignment.CenterHorizontally
+            ),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.padding(start = 24.dp, end = 24.dp, bottom = 24.dp)
         ) {
             items(characters) {
                 CharacterItem(
-                    modifier = Modifier
-                        .background(
-                            brush = Brush.verticalGradient(colors = listOf(
-                                MaterialTheme.colorScheme.surface.copy(alpha = 0.2f),
-                                Color.Transparent
-                            ))
-                        ),
+                    modifier = Modifier.background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(
+                                Color.Transparent,
+                                MaterialTheme.colorScheme.surface.copy(alpha = 0.2f)
+                            )
+                        )
+                    ),
                     clipShape = RoundedCornerShape(16.dp),
-                    character = it
+                    character = it,
+                    onClick = { forward(LocaleRouteItem.DoNotTouch) }
                 )
             }
         }

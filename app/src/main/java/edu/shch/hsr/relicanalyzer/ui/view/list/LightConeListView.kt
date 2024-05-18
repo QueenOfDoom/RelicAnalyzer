@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -12,6 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,6 +25,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -37,20 +42,38 @@ import edu.shch.hsr.relicanalyzer.util.coalesce
 @Composable
 fun LightConeItem(
     lightCone: LightCone,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
 ) {
-    Box(modifier = modifier
-        .height(160.dp)
-        .border(
-            width = 2.dp,
-            color = MaterialTheme.colorScheme.surfaceDim,
-        )
+    Button(
+        shape = RectangleShape,
+        contentPadding = PaddingValues(0.dp),
+        colors = ButtonDefaults.buttonColors().copy(
+            containerColor = Color.Transparent,
+            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+        ),
+        onClick = onClick
     ) {
-        Image(
-            painter = painterResource(id = coalesce(lightCone.art, fallback = lightCone.lightCone)),
-            contentDescription = stringResource(id = lightCone.description),
-            modifier.fillMaxSize()
-        )
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = modifier
+                .height(160.dp)
+                .border(
+                    width = 2.dp,
+                    color = MaterialTheme.colorScheme.surfaceDim,
+                )
+        ) {
+            Image(
+                painter = painterResource(
+                    id = coalesce(
+                        lightCone.art,
+                        fallback = lightCone.lightCone
+                    )
+                ),
+                contentDescription = stringResource(id = lightCone.description),
+                modifier.fillMaxSize()
+            )
+        }
     }
 }
 
@@ -79,7 +102,7 @@ fun LightConeListView(forward: (RouteItem) -> Unit, modifier: Modifier = Modifie
         SearchBox(
             search = search,
             changeSearch = { search = it },
-            openFilter = { forward(LocaleRouteItem(R.string.ui_do_not_touch)) },
+            openFilter = { forward(LocaleRouteItem.DoNotTouch) },
             modifier = Modifier
                 .padding(
                     top = 4.dp, bottom = 16.dp,
@@ -102,7 +125,8 @@ fun LightConeListView(forward: (RouteItem) -> Unit, modifier: Modifier = Modifie
         ) {
             items(lightCones) {
                 LightConeItem(
-                    lightCone = it
+                    lightCone = it,
+                    onClick = { forward(LocaleRouteItem.DoNotTouch) }
                 )
             }
         }

@@ -10,7 +10,6 @@ import androidx.compose.ui.unit.dp
 import coil.ImageLoader
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
-import edu.shch.hsr.relicanalyzer.R
 import edu.shch.hsr.relicanalyzer.hsr.OrnamentSlot
 import edu.shch.hsr.relicanalyzer.hsr.RelicSlot
 import edu.shch.hsr.relicanalyzer.hsr.dynamic.Character
@@ -52,7 +51,7 @@ fun Router(
         .fillMaxSize()
         .padding(top = 64.dp)
 
-    if (last is LocaleRouteItem && last.id == R.string.ui_do_not_touch) {
+    if (last is LocaleRouteItem && last == LocaleRouteItem.DoNotTouch) {
         WorkInProgress(imageLoader = imageLoader, context = context, dismiss = backward)
         if (route.size == 1) {
             ChooseSubject(forward, modifier = Modifier.fillMaxSize())
@@ -73,12 +72,14 @@ fun Router(
             is Relic -> {
                 RelicSetDetailView(
                     relic = enumItem,
+                    forward = forward,
                     modifier = modifierWithOffset
                 )
             }
             is Ornament -> {
                 OrnamentSetDetailView(
                     ornament = enumItem,
+                    forward = forward,
                     modifier = modifierWithOffset
                 )
             }
@@ -92,12 +93,12 @@ fun Router(
             }
         }
     } else if (last is LocaleRouteItem) {
-        when (last.id) {
-            R.string.relic -> { RelicListView(forward, modifierWithOffset) }
-            R.string.ornament -> OrnamentListView(forward, modifierWithOffset)
-            R.string.character -> CharacterListView(forward, modifierWithOffset)
-            R.string.lightcone -> LightConeListView(forward, modifierWithOffset)
-            else -> throw IllegalStateException("Came across illegal state transition.")
+        when (last) {
+            LocaleRouteItem.Relic -> { RelicListView(forward, modifierWithOffset) }
+            LocaleRouteItem.Ornament -> OrnamentListView(forward, modifierWithOffset)
+            LocaleRouteItem.Character -> CharacterListView(forward, modifierWithOffset)
+            LocaleRouteItem.LightCone -> LightConeListView(forward, modifierWithOffset)
+            else -> throw IllegalStateException("Came across illegal state transition for a LocaleRoute.")
         }
     }
 }

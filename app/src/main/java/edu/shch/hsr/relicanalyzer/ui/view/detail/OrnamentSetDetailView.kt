@@ -28,10 +28,17 @@ import edu.shch.hsr.relicanalyzer.ui.component.hsr.EquipmentSetInfoDialogue
 import edu.shch.hsr.relicanalyzer.ui.component.hsr.EquipmentUser
 import edu.shch.hsr.relicanalyzer.ui.component.hsr.EquipmentZigZagView
 import edu.shch.hsr.relicanalyzer.ui.theme.SaibaFamily
+import edu.shch.hsr.relicanalyzer.util.EnumRouteItem
+import edu.shch.hsr.relicanalyzer.util.LocaleRouteItem
+import edu.shch.hsr.relicanalyzer.util.RouteItem
 import edu.shch.hsr.relicanalyzer.util.asDrawableRes
 
 @Composable
-fun OrnamentSetDetailView(ornament: Ornament, modifier: Modifier = Modifier) {
+fun OrnamentSetDetailView(
+    ornament: Ornament,
+    forward: (RouteItem) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val openSetInfo = remember { mutableStateOf(false) }
     if (openSetInfo.value) EquipmentSetInfoDialogue(equipment = ornament)
         { openSetInfo.value = false }
@@ -59,7 +66,9 @@ fun OrnamentSetDetailView(ornament: Ornament, modifier: Modifier = Modifier) {
                 character.ornaments.contains(ornament)
             }
             items(users) {
-                EquipmentUser(character = it)
+                EquipmentUser(character = it) {
+                    forward(LocaleRouteItem.DoNotTouch)
+                }
             }
         }
         HorizontalDivider(
@@ -82,6 +91,7 @@ fun OrnamentSetDetailView(ornament: Ornament, modifier: Modifier = Modifier) {
                 .map { it.asDrawableRes() }.toTypedArray(),
             texts = OrnamentSlot.entries.toTypedArray(),
             spacing = 90.dp,
+            onClick = { forward(LocaleRouteItem.DoNotTouch) },
             modifier = Modifier.fillMaxWidth()
                 .offset(y = 60.dp),
             buttonModifier = Modifier.size(180.dp)
