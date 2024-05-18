@@ -1,54 +1,32 @@
 package edu.shch.hsr.relicanalyzer.ui.view.detail
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
-import androidx.compose.ui.unit.times
 import edu.shch.hsr.relicanalyzer.R
 import edu.shch.hsr.relicanalyzer.hsr.dynamic.Character
 import edu.shch.hsr.relicanalyzer.hsr.dynamic.Relic
 import edu.shch.hsr.relicanalyzer.ui.component.TextMenuButton
-import edu.shch.hsr.relicanalyzer.ui.component.TextualImageButton
+import edu.shch.hsr.relicanalyzer.ui.component.hsr.EquipmentUser
+import edu.shch.hsr.relicanalyzer.ui.component.hsr.EquipmentZigZagView
 import edu.shch.hsr.relicanalyzer.ui.theme.SaibaFamily
+import edu.shch.hsr.relicanalyzer.util.asDrawableRes
+import edu.shch.hsr.relicanalyzer.util.asStringRes
 
-@Composable
-fun RelicSetUser(character: Character) {
-    Image(
-        painter = painterResource(id = character.icon),
-        contentDescription = stringResource(id = character.charName),
-        modifier = Modifier
-            .size(64.dp)
-            .clip(CircleShape)
-            .border(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.outline,
-                shape = CircleShape
-            )
-    )
-}
 
 @Composable
 fun RelicSetDetailView(relic: Relic, modifier: Modifier = Modifier) {
@@ -80,7 +58,7 @@ fun RelicSetDetailView(relic: Relic, modifier: Modifier = Modifier) {
                 }
             }
             items(users) {
-                RelicSetUser(character = it)
+                EquipmentUser(character = it)
             }
         }
         HorizontalDivider(
@@ -98,51 +76,16 @@ fun RelicSetDetailView(relic: Relic, modifier: Modifier = Modifier) {
                 .offset(x = (-30).dp, y = 40.dp),
             textModifier = Modifier.padding(2.dp)
         )
-
-        val size = 160.dp
-        val spacing = 45.dp
-        val relicButtonModifier = Modifier.size(size)
-
-        Row(
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Column {
-                TextualImageButton(
-                    image = relic.head,
-                    text = R.string.relic_head,
-                    fontSize = 4.em,
-                    onClick = { /*TODO*/ },
-                    modifier = relicButtonModifier
-                )
-                Spacer(modifier = Modifier.height(spacing))
-                TextualImageButton(
-                    image = relic.body,
-                    text = R.string.relic_body,
-                    fontSize = 4.em,
-                    onClick = { /*TODO*/ },
-                    modifier = relicButtonModifier
-                )
-            }
-            Column(
-                modifier = Modifier.offset(y = 2 * spacing)
-            ) {
-                TextualImageButton(
-                    image = relic.hands,
-                    text = R.string.relic_hands,
-                    fontSize = 4.em,
-                    onClick = { /*TODO*/ },
-                    modifier = relicButtonModifier
-                )
-                Spacer(modifier = Modifier.height(spacing))
-                TextualImageButton(
-                    image = relic.feet,
-                    text = R.string.relic_feet,
-                    fontSize = 4.em,
-                    onClick = { /*TODO*/ },
-                    modifier = relicButtonModifier
-                )
-            }
-        }
+        EquipmentZigZagView(
+            images = arrayOf(relic.head, relic.body, relic.hands, relic.feet)
+                .map { it.asDrawableRes() }.toTypedArray(),
+            texts = arrayOf(
+                R.string.relic_head, R.string.relic_body,
+                R.string.relic_hands, R.string.relic_feet
+            ).map { it.asStringRes() }.toTypedArray(),
+            spacing = 45.dp,
+            modifier = Modifier.fillMaxWidth(),
+            buttonModifier = Modifier.size(180.dp)
+        )
     }
 }
