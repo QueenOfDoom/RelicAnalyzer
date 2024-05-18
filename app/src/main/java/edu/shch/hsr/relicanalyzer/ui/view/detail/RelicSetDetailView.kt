@@ -11,6 +11,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -21,6 +23,7 @@ import edu.shch.hsr.relicanalyzer.R
 import edu.shch.hsr.relicanalyzer.hsr.dynamic.Character
 import edu.shch.hsr.relicanalyzer.hsr.dynamic.Relic
 import edu.shch.hsr.relicanalyzer.ui.component.TextMenuButton
+import edu.shch.hsr.relicanalyzer.ui.component.hsr.EquipmentSetInfoDialogue
 import edu.shch.hsr.relicanalyzer.ui.component.hsr.EquipmentUser
 import edu.shch.hsr.relicanalyzer.ui.component.hsr.EquipmentZigZagView
 import edu.shch.hsr.relicanalyzer.ui.theme.SaibaFamily
@@ -30,6 +33,9 @@ import edu.shch.hsr.relicanalyzer.util.asStringRes
 
 @Composable
 fun RelicSetDetailView(relic: Relic, modifier: Modifier = Modifier) {
+    val openSetInfo = remember { mutableStateOf(false) }
+    if (openSetInfo.value) EquipmentSetInfoDialogue(equipment = relic)
+        { openSetInfo.value = false }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
@@ -69,7 +75,7 @@ fun RelicSetDetailView(relic: Relic, modifier: Modifier = Modifier) {
         )
         TextMenuButton(
             text = R.string.ui_set_info,
-            onClick = {},
+            onClick = { openSetInfo.value = true },
             fontSize = 4.em,
             modifier = Modifier
                 .align(Alignment.End)
@@ -83,7 +89,7 @@ fun RelicSetDetailView(relic: Relic, modifier: Modifier = Modifier) {
                 R.string.relic_head, R.string.relic_body,
                 R.string.relic_hands, R.string.relic_feet
             ).map { it.asStringRes() }.toTypedArray(),
-            spacing = 45.dp,
+            spacing = 60.dp,
             modifier = Modifier.fillMaxWidth(),
             buttonModifier = Modifier.size(180.dp)
         )

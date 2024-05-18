@@ -23,6 +23,9 @@ private val DarkColorScheme = darkColorScheme(
     surfaceDim = DarkLavender,
     surfaceContainerLow = DimLavender,
 
+    surfaceVariant = OverlayLavender,
+    onSurfaceVariant = PlainAssWhite,
+
     outline = WiltingLavender,
     outlineVariant = WiltingLavender
 )

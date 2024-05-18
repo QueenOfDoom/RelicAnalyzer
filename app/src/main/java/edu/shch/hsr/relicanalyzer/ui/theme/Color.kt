@@ -40,5 +40,8 @@ val NormalLavender = Color(0xFF7965A1)
 // Surface (Inlay) Color
 val DimLavender = Color(0xFF24212A)
 
+// Dialogue Colors
+val OverlayLavender = Color(0xCC24212A)
+
 // Text on Background
 val PlainAssWhite = Color.White

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.times
 import edu.shch.hsr.relicanalyzer.ui.component.TextualImageButton
@@ -23,12 +24,15 @@ fun EquipmentZigZagView(
     modifier: Modifier = Modifier,
     buttonModifier: Modifier = Modifier
 ) {
+    val offset = 10.dp
     val half = images.size / 2
     Row(
-        horizontalArrangement = Arrangement.SpaceEvenly,
+        horizontalArrangement = Arrangement.Center,
         modifier = modifier
     ) {
-        Column {
+        Column(
+            modifier = Modifier.offset(x = offset)
+        ) {
             for (i in 0 until half) {
                 TextualImageButton(
                     image = images[i].id,
@@ -43,7 +47,7 @@ fun EquipmentZigZagView(
             }
         }
         Column(
-            modifier = Modifier.offset(y = 2 * spacing)
+            modifier = Modifier.offset(x = (-offset), y = 2 * spacing)
         ) {
             for (i in half until images.size) {
                 TextualImageButton(

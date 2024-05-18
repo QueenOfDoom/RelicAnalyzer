@@ -11,6 +11,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -21,6 +23,7 @@ import edu.shch.hsr.relicanalyzer.R
 import edu.shch.hsr.relicanalyzer.hsr.dynamic.Character
 import edu.shch.hsr.relicanalyzer.hsr.dynamic.Ornament
 import edu.shch.hsr.relicanalyzer.ui.component.TextMenuButton
+import edu.shch.hsr.relicanalyzer.ui.component.hsr.EquipmentSetInfoDialogue
 import edu.shch.hsr.relicanalyzer.ui.component.hsr.EquipmentUser
 import edu.shch.hsr.relicanalyzer.ui.component.hsr.EquipmentZigZagView
 import edu.shch.hsr.relicanalyzer.ui.theme.SaibaFamily
@@ -29,6 +32,9 @@ import edu.shch.hsr.relicanalyzer.util.asStringRes
 
 @Composable
 fun OrnamentSetDetailView(ornament: Ornament, modifier: Modifier = Modifier) {
+    val openSetInfo = remember { mutableStateOf(false) }
+    if (openSetInfo.value) EquipmentSetInfoDialogue(equipment = ornament)
+        { openSetInfo.value = false }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
@@ -64,7 +70,7 @@ fun OrnamentSetDetailView(ornament: Ornament, modifier: Modifier = Modifier) {
         )
         TextMenuButton(
             text = R.string.ui_set_info,
-            onClick = {},
+            onClick = { openSetInfo.value = true },
             fontSize = 4.em,
             modifier = Modifier
                 .align(Alignment.End)
@@ -79,7 +85,7 @@ fun OrnamentSetDetailView(ornament: Ornament, modifier: Modifier = Modifier) {
             ).map { it.asStringRes() }.toTypedArray(),
             spacing = 90.dp,
             modifier = Modifier.fillMaxWidth()
-                .offset(y = 90.dp),
+                .offset(y = 60.dp),
             buttonModifier = Modifier.size(180.dp)
         )
     }
