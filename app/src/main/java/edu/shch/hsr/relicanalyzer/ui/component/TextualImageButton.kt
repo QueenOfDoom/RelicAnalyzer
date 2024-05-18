@@ -25,8 +25,8 @@ fun TextualImageButton(
     @StringRes text: Int,
     fontSize: TextUnit,
     onClick: () -> Unit,
-    enabled: Boolean = true,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     imageModifier: Modifier = Modifier,
     textModifier: Modifier = Modifier
 ) {

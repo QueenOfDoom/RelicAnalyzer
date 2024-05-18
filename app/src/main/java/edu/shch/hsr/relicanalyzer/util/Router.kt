@@ -1,7 +1,6 @@
 package edu.shch.hsr.relicanalyzer.util
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -28,6 +27,10 @@ fun Router(route: List<RouteItem>, move: (RouteItem) -> Unit) {
         return
     }
 
+    val modifierWithOffset = Modifier
+        .fillMaxSize()
+        .padding(top = 64.dp)
+
     val last = route.last()
     if (last is EnumRouteItem<*>) {
         when (last.value) {
@@ -38,10 +41,16 @@ fun Router(route: List<RouteItem>, move: (RouteItem) -> Unit) {
 
             }
             is Relic -> {
-                RelicSetDetailView(relic = last.value)
+                RelicSetDetailView(
+                    relic = last.value,
+                    modifier = modifierWithOffset
+                )
             }
             is Ornament -> {
-                OrnamentSetDetailView(ornament = last.value)
+                OrnamentSetDetailView(
+                    ornament = last.value,
+                    modifier = modifierWithOffset
+                )
             }
             is RelicSlot -> {
                 if (route.size == 1) throw IllegalStateException("Cannot possibly be in 'Specific Relic' view.")
@@ -53,16 +62,10 @@ fun Router(route: List<RouteItem>, move: (RouteItem) -> Unit) {
             }
         }
     } else if (last is LocaleRouteItem) {
-        val characterModifier = Modifier
-            .fillMaxWidth()
-        val equipmentModifier = Modifier
-            .fillMaxSize()
-            .padding(top = 64.dp)
-
         when (last.id) {
-            R.string.relic -> { RelicListView(move, equipmentModifier) }
-            R.string.ornament -> OrnamentListView(move, equipmentModifier)
-            R.string.character -> CharacterListView(characterModifier)
+            R.string.relic -> { RelicListView(move, modifierWithOffset) }
+            R.string.ornament -> OrnamentListView(move, modifierWithOffset)
+            R.string.character -> CharacterListView(modifierWithOffset)
             R.string.lightcone -> LightConeListView()
             else -> throw IllegalStateException("Came across illegal state transition.")
         }

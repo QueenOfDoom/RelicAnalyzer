@@ -60,8 +60,8 @@ fun ChooseRelicOrnament(
             text = text.second,
             fontSize = 2.em,
             onClick = { route(LocaleRouteItem(text.second)) },
-            enabled = false,
             modifier = Modifier.size(105.dp, 130.dp),
+            enabled = false,
             imageModifier = Modifier
                 .padding(top = 2.dp, bottom = 2.dp)
                 .size(92.dp),

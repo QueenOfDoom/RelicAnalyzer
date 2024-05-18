@@ -185,7 +185,6 @@ fun CharacterListView(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
     ) {
-        Spacer(modifier = Modifier.height(64.dp))
         Text(
             text = stringResource(id = R.string.character),
             fontSize = 7.em,
