@@ -29,7 +29,6 @@ import edu.shch.hsr.relicanalyzer.ui.component.hsr.EquipmentUser
 import edu.shch.hsr.relicanalyzer.ui.component.hsr.EquipmentZigZagView
 import edu.shch.hsr.relicanalyzer.ui.theme.SaibaFamily
 import edu.shch.hsr.relicanalyzer.util.asDrawableRes
-import edu.shch.hsr.relicanalyzer.util.asStringRes
 
 @Composable
 fun OrnamentSetDetailView(ornament: Ornament, modifier: Modifier = Modifier) {

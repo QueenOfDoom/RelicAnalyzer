@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.times
 import edu.shch.hsr.relicanalyzer.hsr.GenericRelicSlot
 import edu.shch.hsr.relicanalyzer.ui.component.TextualImageButton
 import edu.shch.hsr.relicanalyzer.util.DrawableResource
-import edu.shch.hsr.relicanalyzer.util.StringResource
 
 @Composable
 fun EquipmentZigZagView(

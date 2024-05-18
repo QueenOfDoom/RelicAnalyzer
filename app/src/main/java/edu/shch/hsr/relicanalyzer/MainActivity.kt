@@ -1,6 +1,7 @@
 package edu.shch.hsr.relicanalyzer
 
 import android.os.Bundle
+import android.view.MotionEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.addCallback
