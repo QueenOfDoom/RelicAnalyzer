@@ -1,7 +1,6 @@
 package edu.shch.hsr.relicanalyzer
 
 import android.os.Bundle
-import android.view.MotionEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.addCallback
@@ -40,10 +39,12 @@ fun RelicAnalyzer(
 ) {
     /* history-logic */
     val path = remember { mutableStateListOf<RouteItem>() }
-
     dispatcher.addCallback { path.removeLast() }
-
     Surface(modifier = modifier, color = MaterialTheme.colorScheme.background) {
-        Router(path) { path.add(it) }
+        Router(
+            route = path,
+            forward = { path.add(it) },
+            backward = { path.removeLast() }
+        )
     }
 }

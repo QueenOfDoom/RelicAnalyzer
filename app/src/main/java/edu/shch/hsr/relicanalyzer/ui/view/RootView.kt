@@ -8,9 +8,10 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -28,12 +29,12 @@ import edu.shch.hsr.relicanalyzer.util.reverseOn
 fun ChooseRelicOrnament(
     route: (RouteItem) -> Unit,
 ) {
-    val isRelic: MutableState<Boolean> = remember { mutableStateOf(true) }
+    var isRelic: Boolean by rememberSaveable { mutableStateOf(true) }
 
     val (image, text) = arrayOf(
         (R.drawable.relic_117_0 to R.drawable.ornament_311_0),
         (R.string.relic to R.string.ornament)
-    ).map { it.reverseOn(!isRelic.value) }.toTypedArray()
+    ).map { it.reverseOn(!isRelic) }.toTypedArray()
 
     Row(
         verticalAlignment = Alignment.Bottom,
@@ -50,7 +51,7 @@ fun ChooseRelicOrnament(
         )
         IconImageButton(
             image = R.drawable.swap_horiz,
-            onClick = { isRelic.value = !isRelic.value },
+            onClick = { isRelic = !isRelic },
             modifier = Modifier
                 .offset((-10).dp, 0.dp)
                 .scale(1.25f)

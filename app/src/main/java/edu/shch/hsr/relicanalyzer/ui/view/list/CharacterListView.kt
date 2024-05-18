@@ -3,11 +3,9 @@ package edu.shch.hsr.relicanalyzer.ui.view.list
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,19 +17,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -41,18 +33,19 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import edu.shch.hsr.relicanalyzer.R
 import edu.shch.hsr.relicanalyzer.hsr.dynamic.Character
+import edu.shch.hsr.relicanalyzer.ui.component.SearchBox
 import edu.shch.hsr.relicanalyzer.ui.component.ToggleSwitchTextButton
 import edu.shch.hsr.relicanalyzer.ui.theme.SaibaFamily
+import edu.shch.hsr.relicanalyzer.util.LocaleRouteItem
+import edu.shch.hsr.relicanalyzer.util.RouteItem
 
 @Composable
 @Preview
@@ -70,15 +63,14 @@ fun CharacterItem(
         characterName = "Dang Heng IL"
     }
 
-    Box(
-        modifier = modifier
-            .clip(clipShape)
-            .height(160.dp)
-            .border(
-                width = 2.dp,
-                color = MaterialTheme.colorScheme.surfaceDim,
-                shape = clipShape
-            )
+    Box(modifier = modifier
+        .clip(clipShape)
+        .height(160.dp)
+        .border(
+            width = 2.dp,
+            color = MaterialTheme.colorScheme.surfaceDim,
+            shape = clipShape
+        )
     ) {
         Image(
             painter = painterResource(id = character.icon),
@@ -127,51 +119,8 @@ fun CharacterItem(
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
-fun SearchBox(
-    search: String,
-    changeSearch: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val source = remember { MutableInteractionSource() }
-    val textFieldColors = OutlinedTextFieldDefaults.colors()
-    BasicTextField(
-        value = search,
-        onValueChange = changeSearch,
-        singleLine = true,
-        textStyle = LocalTextStyle.current.copy(
-            fontSize = 4.em,
-            color = MaterialTheme.colorScheme.primary
-        ),
-        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
-        modifier = modifier,
-        decorationBox = @Composable { innerTextField ->
-            OutlinedTextFieldDefaults.DecorationBox(
-                value = search,
-                visualTransformation = VisualTransformation.None,
-                innerTextField = innerTextField,
-                singleLine = true,
-                enabled = true,
-                isError = false,
-                interactionSource = source,
-                colors = textFieldColors,
-                contentPadding = PaddingValues(start = 16.dp),
-                container = {
-                    OutlinedTextFieldDefaults.ContainerBox(
-                        enabled = true,
-                        isError = false,
-                        interactionSource = source,
-                        colors = textFieldColors,
-                        shape = CircleShape
-                    )
-                }
-            )
-        }
-    )
-}
-
-@Composable
 fun CharacterListView(
+    forward: (RouteItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var isGeneral: Boolean by rememberSaveable { mutableStateOf(true) }
@@ -205,6 +154,7 @@ fun CharacterListView(
         SearchBox(
             search = search,
             changeSearch = { search = it },
+            openFilter = { forward(LocaleRouteItem(R.string.ui_do_not_touch)) },
             modifier = Modifier
                 .padding(
                     top = 4.dp, bottom = 16.dp,
