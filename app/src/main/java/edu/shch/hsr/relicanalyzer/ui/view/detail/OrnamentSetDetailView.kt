@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import edu.shch.hsr.relicanalyzer.R
+import edu.shch.hsr.relicanalyzer.hsr.OrnamentSlot
 import edu.shch.hsr.relicanalyzer.hsr.dynamic.Character
 import edu.shch.hsr.relicanalyzer.hsr.dynamic.Ornament
 import edu.shch.hsr.relicanalyzer.ui.component.TextMenuButton
@@ -80,9 +81,7 @@ fun OrnamentSetDetailView(ornament: Ornament, modifier: Modifier = Modifier) {
         EquipmentZigZagView(
             images = arrayOf(ornament.planarSphere, ornament.linkRope)
                 .map { it.asDrawableRes() }.toTypedArray(),
-            texts = arrayOf(
-                R.string.ornament_sphere, R.string.ornament_rope
-            ).map { it.asStringRes() }.toTypedArray(),
+            texts = OrnamentSlot.entries.toTypedArray(),
             spacing = 90.dp,
             modifier = Modifier.fillMaxWidth()
                 .offset(y = 60.dp),

@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.times
+import edu.shch.hsr.relicanalyzer.hsr.GenericRelicSlot
 import edu.shch.hsr.relicanalyzer.ui.component.TextualImageButton
 import edu.shch.hsr.relicanalyzer.util.DrawableResource
 import edu.shch.hsr.relicanalyzer.util.StringResource
@@ -19,7 +20,7 @@ import edu.shch.hsr.relicanalyzer.util.StringResource
 @Composable
 fun EquipmentZigZagView(
     images: Array<DrawableResource>,
-    texts: Array<StringResource>,
+    texts: Array<GenericRelicSlot>,
     spacing: Dp,
     modifier: Modifier = Modifier,
     buttonModifier: Modifier = Modifier
@@ -36,7 +37,7 @@ fun EquipmentZigZagView(
             for (i in 0 until half) {
                 TextualImageButton(
                     image = images[i].id,
-                    text = texts[i].id,
+                    text = texts[i].text,
                     fontSize = 4.em,
                     onClick = { /*TODO*/ },
                     modifier = buttonModifier
@@ -52,7 +53,7 @@ fun EquipmentZigZagView(
             for (i in half until images.size) {
                 TextualImageButton(
                     image = images[i].id,
-                    text = texts[i].id,
+                    text = texts[i].text,
                     fontSize = 4.em,
                     onClick = { /*TODO*/ },
                     modifier = buttonModifier

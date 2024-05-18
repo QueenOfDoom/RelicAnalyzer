@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import edu.shch.hsr.relicanalyzer.R
+import edu.shch.hsr.relicanalyzer.hsr.RelicSlot
 import edu.shch.hsr.relicanalyzer.hsr.dynamic.Character
 import edu.shch.hsr.relicanalyzer.hsr.dynamic.Relic
 import edu.shch.hsr.relicanalyzer.ui.component.TextMenuButton
@@ -83,12 +84,9 @@ fun RelicSetDetailView(relic: Relic, modifier: Modifier = Modifier) {
             textModifier = Modifier.padding(2.dp)
         )
         EquipmentZigZagView(
-            images = arrayOf(relic.head, relic.body, relic.hands, relic.feet)
+            images = arrayOf(relic.head, relic.hands, relic.body, relic.feet)
                 .map { it.asDrawableRes() }.toTypedArray(),
-            texts = arrayOf(
-                R.string.relic_head, R.string.relic_body,
-                R.string.relic_hands, R.string.relic_feet
-            ).map { it.asStringRes() }.toTypedArray(),
+            texts = RelicSlot.entries.toTypedArray(),
             spacing = 60.dp,
             modifier = Modifier.fillMaxWidth(),
             buttonModifier = Modifier.size(180.dp)

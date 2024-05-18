@@ -4,23 +4,20 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import edu.shch.hsr.relicanalyzer.R
 
-@Suppress("unused")
-enum class RelicSlot(@StringRes val text: Int) {
-    Head(R.string.relic_head),
-    Hands(R.string.relic_hands),
-    Body(R.string.relic_body),
-    Feet(R.string.relic_feet)
+interface GenericRelicSlot {
+    val text: Int
 }
 
-@Suppress("unused")
-enum class OrnamentSlot(@StringRes val text: Int) {
-    PlanarSphere(R.string.ornament_sphere),
-    LinkRope(R.string.ornament_rope)
+enum class RelicSlot: GenericRelicSlot {
+    Head { override val text = R.string.relic_head },
+    Hands { override val text = R.string.relic_hands },
+    Body { override val text = R.string.relic_body },
+    Feet { override val text = R.string.relic_feet }
 }
 
-enum class RelicType {
-    Relic,
-    PlanarOrnament
+enum class OrnamentSlot: GenericRelicSlot {
+    PlanarSphere { override val text = R.string.ornament_sphere },
+    LinkRope { override val text = R.string.ornament_rope }
 }
 
 interface GenericRelic
