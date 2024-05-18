@@ -22,7 +22,6 @@ enum class OrnamentSlot: GenericRelicSlot {
 
 interface GenericRelic
 
-@Suppress("unused")
 enum class Statistic(
     @StringRes val text: Int,
     @DrawableRes val image: Int
@@ -143,7 +142,6 @@ val SubStats = listOf(
     Statistic.SPEED
 )
 
-@Suppress("unused")
 enum class Element(
     @StringRes val text: Int,
     @DrawableRes val image: Int,
@@ -157,7 +155,6 @@ enum class Element(
     IMAGINARY(R.string.element_imaginary, R.drawable.element_imaginary);
 }
 
-@Suppress("unused")
 enum class Path(
     @StringRes val text: Int,
     @DrawableRes val image: Int,

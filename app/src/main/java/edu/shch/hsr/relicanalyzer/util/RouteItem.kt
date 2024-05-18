@@ -3,12 +3,11 @@ package edu.shch.hsr.relicanalyzer.util
 import androidx.annotation.StringRes
 import edu.shch.hsr.relicanalyzer.R
 
-open class RouteItem(val type: RouteType)
+open class RouteItem
 
-data class EnumRouteItem<T>(val value: T):
-    RouteItem(RouteType.ENUM_ID)
+data class EnumRouteItem<T>(val value: T): RouteItem()
 
-data class LocaleRouteItem(@StringRes val id: Int): RouteItem(RouteType.LOCALE_ID) {
+data class LocaleRouteItem(@StringRes val id: Int): RouteItem() {
     override fun equals(other: Any?) = other is LocaleRouteItem && this.id == other.id
     override fun hashCode() = id
 
@@ -19,9 +18,4 @@ data class LocaleRouteItem(@StringRes val id: Int): RouteItem(RouteType.LOCALE_I
         val Relic = LocaleRouteItem(R.string.relic)
         val Ornament = LocaleRouteItem(R.string.ornament)
     }
-}
-
-enum class RouteType {
-    LOCALE_ID,
-    ENUM_ID
 }

@@ -28,7 +28,6 @@ import edu.shch.hsr.relicanalyzer.ui.component.hsr.EquipmentSetInfoDialogue
 import edu.shch.hsr.relicanalyzer.ui.component.hsr.EquipmentUser
 import edu.shch.hsr.relicanalyzer.ui.component.hsr.EquipmentZigZagView
 import edu.shch.hsr.relicanalyzer.ui.theme.SaibaFamily
-import edu.shch.hsr.relicanalyzer.util.EnumRouteItem
 import edu.shch.hsr.relicanalyzer.util.LocaleRouteItem
 import edu.shch.hsr.relicanalyzer.util.RouteItem
 import edu.shch.hsr.relicanalyzer.util.asDrawableRes
